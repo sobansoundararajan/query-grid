@@ -20,21 +20,24 @@ public class Main {
      */
     static Scanner s=new Scanner(System.in);
     public static List<List>inputs=new LinkedList<List>();
-    static LinkedList<Integer>result=new LinkedList<Integer>();
+    static List<List<Integer>>result=new LinkedList<List<Integer>>();
     public static String []conditions={"Equals","Does Not Equals","Greater Than","Greater Than or EqualTo","Less Than","Less Than or EqualTo","Begines With","Does Not Begin With","Ends with","Does Not End With","Contains","Does Not Contains","Matches","Does Not Matchs"};
     
     
     public static void print(Range r)
     {
-       for(Object row:result)
-        {
-            for(int sc=r.sc;sc<=r.ec;sc++)
-            {
-                Value v=(Value) inputs.get((int) row).get(sc);
-                System.out.print(v.getValue()+" ");
-            }
-        System.out.println();
-        }
+       for(List<Integer>p:result)
+       {
+           for(Integer row:p)
+           {
+               for(int i=r.sc;i<=r.ec;i++)
+               {
+                    Value v=(Value) inputs.get(row).get(i);
+                    System.out.print(v.getValue()+" ");
+               }
+               System.out.println();
+           }
+       }
     }
 
     public static void filter(Range r)
@@ -60,7 +63,6 @@ public class Main {
         }
         UtilityForFilter f=new UtilityForFilter();
         result=f.filter(r,conList);
-        r.setVisibleRows(result);
     }
     public static void groupBy(Range r)
     {
@@ -75,13 +77,12 @@ public class Main {
         gb=new UtilityForGroupBy();
        result=gb.groupBy(r,colList);
        
-       Map<List<Object>, List<Integer>>map=GroupBy.getResult();
-       for(Map.Entry<List<Object>, List<Integer>>entry:map.entrySet())
+       Map<List<Object>, List<List<Integer>>>map=GroupBy.getResult();
+       for(Map.Entry<List<Object>, List<List<Integer>>>entry:map.entrySet())
        {
             System.out.println(entry.getKey());
             System.out.println(entry.getValue());
        }
-       r.setVisibleRows(result);
     }
     public static void main(String[] args) throws FileNotFoundException, IOException, ParseException {
         // TODO code application logic here
@@ -117,8 +118,9 @@ public class Main {
          Range r=new Range(sr,er,sc,ec);
          LinkedList<Integer>temp=new LinkedList<Integer>();
          for(;sr<=er;sr++)
-          result.add(sr);
-         r.setVisibleRows(result);
+          temp.add(sr);
+         result.add(temp);
+         r.setVisibleRows((LinkedList<List<Integer>>) result);
          Main.print(r);
          int op=4;
          while(op!=0)

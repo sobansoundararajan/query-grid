@@ -13,80 +13,56 @@ import java.util.*;
  * @author admin
  */
 public class UtilityForGroupBy {
-    private Map<List<Object>,List<Integer>>store= new LinkedHashMap<List<Object>,List<Integer>>();
-    private static boolean flage=true;
-    private List<Object>resultKey=new LinkedList<Object>();
-    public LinkedList<Integer> groupBy(Range r,List<Integer> colList)
+    public List<List<Integer>> groupBy(Range r,List<Integer> colList)
     {
-        List<Integer>input=r.getVisibleRows();
-        List<LinkedList<Integer>>in=new LinkedList<LinkedList<Integer>>();
-        in.add((LinkedList<Integer>) input);
-        
-        for(Integer tcol:colList)
+        List<List<Integer>>input=new LinkedList<List<Integer>>();
+        input=r.getVisibleRows();
+         
+         Map<List<Object>,List<List<Integer>>>groupByMap=new HashMap<List<Object>,List<List<Integer>>>();
+        for(List<Integer>rowList:input)
         {
-            List<LinkedList<Integer>>result=new LinkedList<LinkedList<Integer>>();
-            Map<List<Object>,List<Integer>>tempstore= new LinkedHashMap<List<Object>,List<Integer>>();
-            for(List<Integer> list:in)
+            HashMap<List<Object>,List<Integer>>tempMap=new HashMap<List<Object>,List<Integer>>();
+            for(Integer row:rowList)
             {
-                Map<Object, LinkedList<Integer>>tMap=new LinkedHashMap<Object,LinkedList<Integer>>();
-                LinkedList<Integer>tempResult=new LinkedList<Integer>();
-                for(Integer row:list)
+                List<Object>groupKey=new LinkedList<Object>();
+                for(Integer col:colList)
                 {
-                    Value v=(Value) inputs.get(row).get(tcol);
-                    tempResult=(LinkedList<Integer>) tMap.get(v.getValue());
-                    if(tempResult==null)
-                    {
-                        tempResult=new LinkedList<Integer>();
-                        tempResult.add(row);
-                        tMap.put(v.getValue(),tempResult);
-                    }
-                    else
-                        tempResult.add(row);
+                     Value v=(Value) inputs.get(row).get(col);
+                     groupKey.add(v.getValue());
                 }
-                
-                for(Object key:tMap.keySet())
+                List<Integer>rowValue=tempMap.get(groupKey);
+                if(rowValue==null)
                 {
-                    if(flage)
-                    {
-                        LinkedList<Object>resultKey=new LinkedList<Object>();
-                        resultKey.add(key);
-                        store.put(resultKey,tMap.get(key));
-                    }
-                    else
-                    {
-                       
-                        for(Map.Entry<List<Object>, List<Integer>>entry:store.entrySet())
-                        {
-                                resultKey=entry.getKey();
-                                List<Integer>tvalue=entry.getValue();
-                                
-                                if(tvalue.containsAll(tMap.get(key)))
-                                {
-                                    List<Object>temp=new LinkedList<Object>();
-                                    temp.addAll(resultKey);
-                                    temp.add(key);
-                                    tempstore.put(temp,tMap.get(key));
-                                }
-                        }
-                        
-                    } 
-                   
-                    result.add(tMap.get(key));
+                    List<Integer>temp=new LinkedList<Integer>();
+                    temp.add(row);
+                    tempMap.put(groupKey, temp);
                 }
-               
+                else
+                {
+                    rowValue.add(row);
+                     tempMap.put(groupKey, rowValue);
+                }
             }
-             if(!flage)
-                    store=tempstore;
-            if(flage)
-                flage=false;
-            in=result;
-        } 
-        GroupBy gb=new GroupBy(colList,store);
-        Range.addResult(gb);
-        input=new LinkedList<Integer>();
-        for(List<Integer> t:in)
-        input.addAll(t);
-        return (LinkedList<Integer>) input;
+            for(Map.Entry<List<Object>,List<Integer>>map:tempMap.entrySet())
+            {
+                List<Object> key=map.getKey();
+                List<List<Integer>> value=groupByMap.get(key);
+                if(value==null)
+                {
+                    value=new LinkedList();
+                }
+                    value.add(map.getValue());
+                    groupByMap.put(key, value);
+            }
+        }
+        input=new LinkedList<List<Integer>>();
+        GroupBy g=new GroupBy(colList,groupByMap);
+        for(Map.Entry<List<Object>,List<List<Integer>>>map:groupByMap.entrySet())
+        {
+            input.addAll(map.getValue());
+        }
+        r.setVisibleRows(input);
+        return input;
     }
 }
     

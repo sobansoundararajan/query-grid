@@ -14,9 +14,9 @@ import java.util.*;
 public class Filter  implements GroupByAndFilter{
     
     private List<Condition>conList;
-    private List<Integer>result;
+    private List<List<Integer>>result;
 
-    public Filter(List<Condition> conList, List<Integer> result) {
+    public Filter(List<Condition> conList, List<List<Integer>> result) {
         this.conList = conList;
         this.result = result;
     }

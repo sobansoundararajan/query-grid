@@ -14,7 +14,6 @@ import java.util.function.Predicate;
  * @author admin
  */
 public class UtilityForFilter {
-    LinkedList<Integer>result=new LinkedList<Integer>();
     static List<ConditionsEnum>conditions=new LinkedList<ConditionsEnum>();
     static Map<ConditionsEnum,BiFunction<Value,String,Boolean>>conditionMap=new EnumMap<ConditionsEnum,BiFunction<Value,String,Boolean>>(ConditionsEnum.class);
    private Boolean equals(Value v,String condition)
@@ -114,27 +113,34 @@ public class UtilityForFilter {
                     conditionMap.put(ConditionsEnum.DoesNotMatchs,(v1,v2)-> !util.equals(v1,v2));
    }
     
-    public LinkedList<Integer> filter(Range r,LinkedList<Condition>conList)
+    public List<List<Integer>> filter(Range r,LinkedList<Condition>conList)
     {   
         
-        List<Integer>input=r.getVisibleRows();
-        for(Integer row:input)
-        {
-            int count=0;
-            for(Condition c:conList)
+        List<List<Integer>>input=r.getVisibleRows();
+        List<List<Integer>>result=new LinkedList<List<Integer>>();
+        for(List<Integer>rowList:input)
+        { 
+            List<Integer>temp=new LinkedList<Integer>();
+            for(Integer row:rowList)
             {
-                Value v=(Value) inputs.get(row).get(c.col);
-                BiFunction<Value,String,Boolean> test =conditionMap.get(conditions.get(c.conNo));
-                if(test.apply(v, c.condition))
-                    count++;
-                else
-                    break;
+                int count=0;
+                for(Condition c:conList)
+                {
+                    Value v=(Value) inputs.get(row).get(c.col);
+                    BiFunction<Value,String,Boolean> test =conditionMap.get(conditions.get(c.conNo));
+                    if(test.apply(v, c.condition))
+                        count++;
+                    else
+                        break;
+                }
+                if(count==conList.size()-1)
+                    temp.add(row);
             }
-            if(count==conList.size()-1)
-                result.add(row);
+            result.add(temp);
         }
      Filter f=new Filter(conList,result);
-     Range.addResult(f);
+     r.addResult(f);
+     r.setVisibleRows(result);
      return result;
     }
 }

@@ -13,14 +13,14 @@ import java.util.*;
  */
 public class GroupBy  implements GroupByAndFilter{
     private List<Integer>colList;
-    private static Map<List<Object>,List<Integer>>result;
+    private static Map<List<Object>,List<List<Integer>>>result;
 
-    public GroupBy(List<Integer> colList, Map<List<Object>, List<Integer>> result) {
+    public GroupBy(List<Integer> colList, Map<List<Object>, List<List<Integer>>> result) {
         this.colList = colList;
         this.result = result;
     }
 
-    public static Map<List<Object>, List<Integer>> getResult() {
+    public static Map<List<Object>, List<List<Integer>>> getResult() {
         return result;
     }
     

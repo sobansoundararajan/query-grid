@@ -16,7 +16,7 @@ public class Range {
     final int er;
     final int sc;
     final int ec;
-    List<Integer>visibleRows;
+    List<List<Integer>> visibleRows;
     private static final List<GroupByAndFilter>result=new LinkedList<GroupByAndFilter>();
     Range(int sr,int er,int sc,int ec)
     {
@@ -30,12 +30,12 @@ public class Range {
         result.add(obj);
     }
 
-    public void setVisibleRows(LinkedList<Integer> visibleRows) {
-        this.visibleRows=new LinkedList<Integer>();
+    public void setVisibleRows(List<List<Integer>> visibleRows) {
+        this.visibleRows=new LinkedList<List<Integer>>();
         this.visibleRows.addAll(visibleRows);
     }
 
-    public List<Integer> getVisibleRows() {
+    public List<List<Integer>> getVisibleRows() {
         return visibleRows;
     }
     
