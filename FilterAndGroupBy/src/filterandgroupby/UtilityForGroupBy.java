@@ -30,29 +30,12 @@ public class UtilityForGroupBy {
                      Value v=(Value) inputs.get(row).get(col);
                      groupKey.add(v.getValue());
                 }
-                List<Integer>rowValue=tempMap.get(groupKey);
-                if(rowValue==null)
-                {
-                    List<Integer>temp=new LinkedList<Integer>();
-                    temp.add(row);
-                    tempMap.put(groupKey, temp);
-                }
-                else
-                {
-                    rowValue.add(row);
-                     tempMap.put(groupKey, rowValue);
-                }
+                tempMap.computeIfAbsent(groupKey, k->new LinkedList()).add(row);
             }
             for(Map.Entry<List<Object>,List<Integer>>map:tempMap.entrySet())
             {
                 List<Object> key=map.getKey();
-                List<List<Integer>> value=groupByMap.get(key);
-                if(value==null)
-                {
-                    value=new LinkedList();
-                }
-                    value.add(map.getValue());
-                    groupByMap.put(key, value);
+                groupByMap.computeIfAbsent(key, k->new LinkedList ()).add(map.getValue());
             }
         }
         input=new LinkedList<List<Integer>>();
