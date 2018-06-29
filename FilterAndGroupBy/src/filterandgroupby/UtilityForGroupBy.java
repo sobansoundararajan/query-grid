@@ -13,39 +13,33 @@ import java.util.*;
  * @author admin
  */
 public class UtilityForGroupBy {
-    public List<List<Integer>> groupBy(Range r,List<Integer> colList)
+    public GroupByResult groupBy(Range r,Collection<Integer> colList)
     {
-        List<List<Integer>>input=new LinkedList<List<Integer>>();
+        Set<Set<Integer>>input=new HashSet();
+        GroupByResult gp=new GroupByResult();
         input=r.getVisibleRows();
-         
-         Map<List<Object>,List<List<Integer>>>groupByMap=new HashMap<List<Object>,List<List<Integer>>>();
-        for(List<Integer>rowList:input)
+        for(Set<Integer>rowList:input)
         {
-            HashMap<List<Object>,List<Integer>>tempMap=new HashMap<List<Object>,List<Integer>>();
+            HashMap<List<Object>,Set<Integer>>tempMap=new HashMap();
             for(Integer row:rowList)
             {
-                List<Object>groupKey=new LinkedList<Object>();
+                List<Object>groupKey=new LinkedList();
                 for(Integer col:colList)
                 {
                      Value v=(Value) inputs.get(row).get(col);
                      groupKey.add(v.getValue());
                 }
-                tempMap.computeIfAbsent(groupKey, k->new LinkedList()).add(row);
+                tempMap.computeIfAbsent(groupKey, k->new HashSet()).add(row);
             }
-            for(Map.Entry<List<Object>,List<Integer>>map:tempMap.entrySet())
+            for(Map.Entry<List<Object>,Set<Integer>>map:tempMap.entrySet())
             {
                 List<Object> key=map.getKey();
-                groupByMap.computeIfAbsent(key, k->new LinkedList ()).add(map.getValue());
+                gp.getGroupByMap().computeIfAbsent(key, k-> new VisibleRows()).getVisibleRows().add(map.getValue());
             }
         }
-        input=new LinkedList<List<Integer>>();
-        GroupBy g=new GroupBy(colList,groupByMap);
-        for(Map.Entry<List<Object>,List<List<Integer>>>map:groupByMap.entrySet())
-        {
-            input.addAll(map.getValue());
-        }
-        r.setVisibleRows(input);
-        return input;
+        GroupBy g=new GroupBy(colList,gp);
+        r.addResult(g);
+        return gp;
     }
 }
     

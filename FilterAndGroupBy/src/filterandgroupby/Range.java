@@ -16,27 +16,41 @@ public class Range {
     final int er;
     final int sc;
     final int ec;
-    List<List<Integer>> visibleRows;
-    private static final List<GroupByAndFilter>result=new LinkedList<GroupByAndFilter>();
+
+    private final LinkedList<GroupByAndFilter>result;
     Range(int sr,int er,int sc,int ec)
     {
         this.sr=sr;
         this.er=er;
         this.sc=sc;
         this.ec=ec;
+        this.result=new LinkedList<GroupByAndFilter>();
     }
-    public static void addResult(GroupByAndFilter obj)
+    public void addResult(GroupByAndFilter obj)
     {
         result.add(obj);
     }
-
-    public void setVisibleRows(List<List<Integer>> visibleRows) {
-        this.visibleRows=new LinkedList<List<Integer>>();
-        this.visibleRows.addAll(visibleRows);
+    public GroupByAndFilter getLastOperation()
+    {
+        return this.result.get(this.result.size()-1);
     }
-
-    public List<List<Integer>> getVisibleRows() {
-        return visibleRows;
+    public Set<Set<Integer>> getVisibleRows()
+    {
+        VisibleRows vr;
+        if(this.result.isEmpty())
+        {
+            vr=new VisibleRows();
+            Set<Integer>temp=new LinkedHashSet();
+            for(int i=this.sr;i<=this.er;i++)
+            {
+                temp.add(i);
+            }
+            vr.getVisibleRows().add(temp);
+        }
+        else
+        {
+            vr=this.result.getLast().getVisibleRows();
+        }
+        return vr.getVisibleRows();
     }
-    
 }

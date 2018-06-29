@@ -4,11 +4,14 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/filterandgroupby/GroupBy.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/filterandgroupby/GroupByAndFilter.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/filterandgroupby/Range.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/filterandgroupby/FilterResult.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/filterandgroupby/UtilityForFilter.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/filterandgroupby/Filter.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/filterandgroupby/UtilityForGroupBy.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/filterandgroupby/Main.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/filterandgroupby/GroupByResult.java</file>
         </group>
     </open-files>
 </project-private>

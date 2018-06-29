@@ -12,16 +12,18 @@ import java.util.*;
  * @author admin
  */
 public class GroupBy  implements GroupByAndFilter{
-    private List<Integer>colList;
-    private static Map<List<Object>,List<List<Integer>>>result;
+    private final Collection<Integer>colList;
+    private final GroupByResult g;
 
-    public GroupBy(List<Integer> colList, Map<List<Object>, List<List<Integer>>> result) {
+    public GroupBy(Collection<Integer> colList, GroupByResult g) {
         this.colList = colList;
-        this.result = result;
+        this.g=g;
     }
-
-    public static Map<List<Object>, List<List<Integer>>> getResult() {
-        return result;
+    @Override
+    public VisibleRows getVisibleRows() {
+        return g.getVisibleRows();
     }
     
+
 }
+    

@@ -13,12 +13,16 @@ import java.util.*;
  */
 public class Filter  implements GroupByAndFilter{
     
-    private List<Condition>conList;
-    private List<List<Integer>>result;
-
-    public Filter(List<Condition> conList, List<List<Integer>> result) {
+    private final Collection<Condition>conList;
+    private final FilterResult fr;
+    public Filter(Collection<Condition> conList,FilterResult fr) {
         this.conList = conList;
-        this.result = result;
+        this.fr = fr;
+    }
+
+    @Override
+    public VisibleRows getVisibleRows() {
+        return fr.getVr();
     }
     
 }

@@ -5,7 +5,6 @@
  */
 package filterandgroupby;
 import static filterandgroupby.Main.inputs;
-import static filterandgroupby.Main.result;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
@@ -97,8 +96,8 @@ public class UtilityForFilter {
                     conditions.add(ConditionsEnum.DoesNotContains);
                     conditions.add(ConditionsEnum.Matches);
                     conditions.add(ConditionsEnum.DoesNotMatchs);
-                    conditionMap.put(ConditionsEnum.Equals, (v1,v2) -> util.equals(v1,v2));
-                    conditionMap.put(ConditionsEnum.DoesNotEquals, (v1,v2) -> !util.equals(v1,v2));
+                    conditionMap.put(ConditionsEnum.Equals, (v1,v2) -> !util.equals(v1,v2));
+                    conditionMap.put(ConditionsEnum.DoesNotEquals, (v1,v2) -> util.equals(v1,v2));
                     conditionMap.put(ConditionsEnum.GreaterThan, (v1,v2) -> util.greaterThan(v1,v2));
                     conditionMap.put(ConditionsEnum.GreaterThanOrEqualTo, (v1,v2) -> !util.lessThan(v1,v2));
                     conditionMap.put(ConditionsEnum.LessThan, (v1,v2) -> util.lessThan(v1,v2));
@@ -113,14 +112,13 @@ public class UtilityForFilter {
                     conditionMap.put(ConditionsEnum.DoesNotMatchs,(v1,v2)-> !util.equals(v1,v2));
    }
     
-    public List<List<Integer>> filter(Range r,LinkedList<Condition>conList)
+    public FilterResult filter(Range r,Collection<Condition>conList)
     {   
-        
-        List<List<Integer>>input=r.getVisibleRows();
-        List<List<Integer>>result=new LinkedList<List<Integer>>();
-        for(List<Integer>rowList:input)
+        FilterResult fr=new FilterResult();
+        Set<Set<Integer>>input=r.getVisibleRows();
+        for(Set<Integer>rowList:input)
         { 
-            List<Integer>temp=new LinkedList<Integer>();
+            Set<Integer>temp=new HashSet();
             for(Integer row:rowList)
             {
                 int count=0;
@@ -136,11 +134,10 @@ public class UtilityForFilter {
                 if(count==conList.size()-1)
                     temp.add(row);
             }
-            result.add(temp);
+            fr.add(temp);
         }
-     Filter f=new Filter(conList,result);
+     Filter f=new Filter(conList,fr);
      r.addResult(f);
-     r.setVisibleRows(result);
-     return result;
+     return fr;
     }
 }

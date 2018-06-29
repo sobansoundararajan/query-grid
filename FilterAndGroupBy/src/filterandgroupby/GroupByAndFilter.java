@@ -10,5 +10,5 @@ package filterandgroupby;
  * @author admin
  */
 public interface GroupByAndFilter {
-    
+    public VisibleRows getVisibleRows();
 }
