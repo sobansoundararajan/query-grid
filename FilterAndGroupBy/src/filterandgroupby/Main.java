@@ -20,23 +20,23 @@ public class Main {
      */
     static Scanner scanner=new Scanner(System.in);
   //  public static ArrayList<ArrayList<Value>>inputs=new ArrayList<ArrayList<Value>>();
-    static List<ConditionsEnum>conditions=new ArrayList<ConditionsEnum>();
+    static Map<String,ConditionsEnum>conditions=new HashMap ();
     static
     {
-                    conditions.add(ConditionsEnum.Equals);
-                    conditions.add(ConditionsEnum.DoesNotEquals);
-                    conditions.add(ConditionsEnum.GreaterThan);
-                    conditions.add(ConditionsEnum.GreaterThanOrEqualTo);
-                    conditions.add(ConditionsEnum.LessThan);
-                    conditions.add(ConditionsEnum.LessThanOrEqualTo);
-                    conditions.add(ConditionsEnum.BeginesWith);
-                    conditions.add(ConditionsEnum.DoesNotBeginWith);
-                    conditions.add(ConditionsEnum.EndsWith);
-                    conditions.add(ConditionsEnum.DoesNotEndsWith);
-                    conditions.add(ConditionsEnum.Contains);
-                    conditions.add(ConditionsEnum.DoesNotContains);
-                    conditions.add(ConditionsEnum.Matches);
-                    conditions.add(ConditionsEnum.DoesNotMatchs);
+                    conditions.put("equals",ConditionsEnum.Equals);
+                    conditions.put("does not equals",ConditionsEnum.DoesNotEquals);
+                    conditions.put("greater than",ConditionsEnum.GreaterThan);
+                    conditions.put("greater than or equal to",ConditionsEnum.GreaterThanOrEqualTo);
+                    conditions.put("less than",ConditionsEnum.LessThan);
+                    conditions.put("less than or equalto",ConditionsEnum.LessThanOrEqualTo);
+                    conditions.put("begines with",ConditionsEnum.BeginesWith);
+                    conditions.put("does not begines with",ConditionsEnum.DoesNotBeginWith);
+                    conditions.put("ends with",ConditionsEnum.EndsWith);
+                    conditions.put("does not ends with",ConditionsEnum.DoesNotEndsWith);
+                    conditions.put("contains",ConditionsEnum.Contains);
+                    conditions.put("does not contains",ConditionsEnum.DoesNotContains);
+                    conditions.put("matches",ConditionsEnum.Matches);
+                    conditions.put("does not matches",ConditionsEnum.DoesNotMatchs);
     }
     public static void print(Grid grid,Range range)
     {
@@ -62,14 +62,14 @@ public class Main {
         {
             System.out.println("Enter the col Number");
             int col=scanner.nextInt();
-            for(int i=0;i<conditions.size();i++)
-            {
-                System.out.println(i+"-"+conditions.get(i));
-            }
-            int con=scanner.nextInt();
             scanner.nextLine();
-            String condition=scanner.nextLine();
-            Condition c=new Condition(col+range.startCol,conditions.get(con),condition);
+            for(String str:conditions.keySet())
+            {
+                System.out.println(str);
+            }
+            String condition=scanner.nextLine().toLowerCase();
+            String value=scanner.nextLine();
+            Condition c=new Condition(col+range.startCol,conditions.get(condition),value);
             conList.add(c);
             System.out.println("0-Finish");
             op=scanner.nextInt();
@@ -81,7 +81,6 @@ public class Main {
     {
         System.out.print("Enter the col Number");
         String input=scanner.nextLine();
-        System.out.print(input);
         String [] inArr=input.split(" ");
         Collection<Integer>colList=new LinkedList ();
         for (String inArr1 : inArr) {

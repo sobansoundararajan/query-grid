@@ -18,10 +18,10 @@ public class Grid {
     public final List<List<Value>>VALUES=new ArrayList (MAXROWS);
 
     public Grid() {
-        System.out.println("Grid Cons Started");
+        //System.out.println("Grid Cons Started");
         for(int row=0;row<=MAXROWS;row++)
         {
-            System.out.println(row);
+            //System.out.println(row);
             this.VALUES.add(new ArrayList (MAXCOLS));
             for(int col=0;col<=MAXCOLS;col++)
             {
