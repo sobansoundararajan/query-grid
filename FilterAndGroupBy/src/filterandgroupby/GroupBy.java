@@ -23,6 +23,11 @@ public class GroupBy  implements GroupByAndFilter{
     public VisibleRows getVisibleRows() {
         return g.getVisibleRows();
     }
+
+    @Override
+    public Map<List<Object>, VisibleRows> getGroupByMap() {
+        return g.getGroupByMap();
+    }
     
 
 }

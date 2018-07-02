@@ -22,7 +22,12 @@ public class Filter  implements GroupByAndFilter{
 
     @Override
     public VisibleRows getVisibleRows() {
-        return fr.getVr();
+        return fr.getVisibleRows();
+    }
+
+    @Override
+    public Map<List<Object>, VisibleRows> getGroupByMap() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

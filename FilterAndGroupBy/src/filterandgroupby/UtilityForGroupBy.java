@@ -5,7 +5,6 @@
  */
 package filterandgroupby;
 
-import static filterandgroupby.Main.inputs;
 import java.util.*;
 
 /**
@@ -13,11 +12,11 @@ import java.util.*;
  * @author admin
  */
 public class UtilityForGroupBy {
-    public GroupByResult groupBy(Range r,Collection<Integer> colList)
+    public static void groupBy(Grid grid,Range range,Collection<Integer> colList)
     {
         Set<Set<Integer>>input=new HashSet();
         GroupByResult gp=new GroupByResult();
-        input=r.getVisibleRows();
+        input=range.getVisibleRows();
         for(Set<Integer>rowList:input)
         {
             HashMap<List<Object>,Set<Integer>>tempMap=new HashMap();
@@ -26,7 +25,7 @@ public class UtilityForGroupBy {
                 List<Object>groupKey=new LinkedList();
                 for(Integer col:colList)
                 {
-                     Value v=(Value) inputs.get(row).get(col);
+                     Value v= grid.get(row,col);
                      groupKey.add(v.getValue());
                 }
                 tempMap.computeIfAbsent(groupKey, k->new HashSet()).add(row);
@@ -38,8 +37,7 @@ public class UtilityForGroupBy {
             }
         }
         GroupBy g=new GroupBy(colList,gp);
-        r.addResult(g);
-        return gp;
+        range.addResult(g);
     }
 }
     

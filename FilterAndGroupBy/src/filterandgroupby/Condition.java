@@ -10,14 +10,26 @@ package filterandgroupby;
  * @author admin
  */
 public class Condition {
-    int col;
-    int conNo;
-    String condition;
+    private int col;
+    private ConditionsEnum condition;
+    private String value;
 
-    public Condition(int col, int conNo, String condition) {
+    public int getCol() {
+        return col;
+    }
+
+    public ConditionsEnum getCondition() {
+        return condition;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public Condition(int col, ConditionsEnum condition, String value) {
         this.col = col;
-        this.conNo = conNo;
         this.condition = condition;
+        this.value = value;
     }
    
     

@@ -12,23 +12,27 @@ import java.util.*;
  * @author admin
  */
 public class Range {
-    final int sr;
-    final int er;
-    final int sc;
-    final int ec;
+    final int startRow;
+    final int endRow;
+    final int startCol;
+    final int endCol;
 
-    private final LinkedList<GroupByAndFilter>result;
-    Range(int sr,int er,int sc,int ec)
+    private final ArrayList<GroupByAndFilter>result;
+    Range(int startRow,int endRow,int startCol,int endCol)
     {
-        this.sr=sr;
-        this.er=er;
-        this.sc=sc;
-        this.ec=ec;
-        this.result=new LinkedList<GroupByAndFilter>();
+        this.startRow=startRow;
+        this.endRow=endRow;
+        this.startCol=startCol;
+        this.endCol=endCol;
+        this.result=new ArrayList ();
     }
     public void addResult(GroupByAndFilter obj)
     {
         result.add(obj);
+    }
+
+    public ArrayList<GroupByAndFilter> getResult() {
+        return result;
     }
     public GroupByAndFilter getLastOperation()
     {
@@ -41,7 +45,7 @@ public class Range {
         {
             vr=new VisibleRows();
             Set<Integer>temp=new LinkedHashSet();
-            for(int i=this.sr;i<=this.er;i++)
+            for(int i=this.startRow;i<=this.endRow;i++)
             {
                 temp.add(i);
             }
@@ -49,7 +53,7 @@ public class Range {
         }
         else
         {
-            vr=this.result.getLast().getVisibleRows();
+            vr=this.result.get(result.size()-1).getVisibleRows();
         }
         return vr.getVisibleRows();
     }

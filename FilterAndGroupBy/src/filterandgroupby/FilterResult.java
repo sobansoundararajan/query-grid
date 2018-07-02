@@ -21,7 +21,7 @@ public class FilterResult {
         this.vr.getVisibleRows().add(e);
     }
 
-    public VisibleRows getVr() {
+    public VisibleRows getVisibleRows() {
         return vr;
     }
 }

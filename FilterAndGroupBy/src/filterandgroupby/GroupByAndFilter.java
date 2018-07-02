@@ -5,10 +5,14 @@
  */
 package filterandgroupby;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author admin
  */
 public interface GroupByAndFilter {
     public VisibleRows getVisibleRows();
+    public Map<List<Object>, VisibleRows> getGroupByMap();
 }

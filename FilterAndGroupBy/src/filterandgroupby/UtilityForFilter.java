@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package filterandgroupby;
-import static filterandgroupby.Main.inputs;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
@@ -13,8 +12,8 @@ import java.util.function.Predicate;
  * @author admin
  */
 public class UtilityForFilter {
-    static List<ConditionsEnum>conditions=new LinkedList<ConditionsEnum>();
-    static Map<ConditionsEnum,BiFunction<Value,String,Boolean>>conditionMap=new EnumMap<ConditionsEnum,BiFunction<Value,String,Boolean>>(ConditionsEnum.class);
+    
+   static Map<ConditionsEnum,BiFunction<Value,String,Boolean>>conditionMap=new EnumMap<ConditionsEnum,BiFunction<Value,String,Boolean>>(ConditionsEnum.class);
    private Boolean equals(Value v,String condition)
    {
          if(!v.type.equals(DataTypes.String))
@@ -82,62 +81,46 @@ public class UtilityForFilter {
    static{
 
         UtilityForFilter util=new UtilityForFilter();
-                    conditions.add(ConditionsEnum.Equals);
-                    conditions.add(ConditionsEnum.DoesNotEquals);
-                    conditions.add(ConditionsEnum.GreaterThan);
-                    conditions.add(ConditionsEnum.GreaterThanOrEqualTo);
-                    conditions.add(ConditionsEnum.LessThan);
-                    conditions.add(ConditionsEnum.LessThanOrEqualTo);
-                    conditions.add(ConditionsEnum.BeginesWith);
-                    conditions.add(ConditionsEnum.DoesNotBeginWith);
-                    conditions.add(ConditionsEnum.EndsWith);
-                    conditions.add(ConditionsEnum.DoesNotEndsWith);
-                    conditions.add(ConditionsEnum.Contains);
-                    conditions.add(ConditionsEnum.DoesNotContains);
-                    conditions.add(ConditionsEnum.Matches);
-                    conditions.add(ConditionsEnum.DoesNotMatchs);
-                    conditionMap.put(ConditionsEnum.Equals, (v1,v2) -> !util.equals(v1,v2));
-                    conditionMap.put(ConditionsEnum.DoesNotEquals, (v1,v2) -> util.equals(v1,v2));
+                    
+                    conditionMap.put(ConditionsEnum.Equals, (v1,v2) -> util.equals(v1,v2));
+                    conditionMap.put(ConditionsEnum.DoesNotEquals, (v1,v2) -> !util.equals(v1,v2));
                     conditionMap.put(ConditionsEnum.GreaterThan, (v1,v2) -> util.greaterThan(v1,v2));
                     conditionMap.put(ConditionsEnum.GreaterThanOrEqualTo, (v1,v2) -> !util.lessThan(v1,v2));
                     conditionMap.put(ConditionsEnum.LessThan, (v1,v2) -> util.lessThan(v1,v2));
                     conditionMap.put(ConditionsEnum.LessThanOrEqualTo, (v1,v2)-> !util.greaterThan(v1,v2));
-                    conditionMap.put(ConditionsEnum.BeginesWith, (v1,v2)-> !util.beginsWith(v1,v2));
-                    conditionMap.put(ConditionsEnum.DoesNotBeginWith, (v1,v2)-> util.beginsWith(v1,v2));
-                    conditionMap.put(ConditionsEnum.EndsWith, (v1,v2)-> !util.endsWith(v1,v2));
-                    conditionMap.put(ConditionsEnum.DoesNotEndsWith, (v1,v2)-> util.endsWith(v1,v2));
+                    conditionMap.put(ConditionsEnum.BeginesWith, (v1,v2)-> util.beginsWith(v1,v2));
+                    conditionMap.put(ConditionsEnum.DoesNotBeginWith, (v1,v2)-> !util.beginsWith(v1,v2));
+                    conditionMap.put(ConditionsEnum.EndsWith, (v1,v2)-> util.endsWith(v1,v2));
+                    conditionMap.put(ConditionsEnum.DoesNotEndsWith, (v1,v2)-> !util.endsWith(v1,v2));
                     conditionMap.put(ConditionsEnum.Contains,(v1,v2)-> util.contains(v1,v2));
                     conditionMap.put(ConditionsEnum.DoesNotContains,(v1,v2) -> !util.contains(v1,v2));
                     conditionMap.put(ConditionsEnum.Matches,(v1,v2) -> util.equals(v1,v2));
                     conditionMap.put(ConditionsEnum.DoesNotMatchs,(v1,v2)-> !util.equals(v1,v2));
    }
     
-    public FilterResult filter(Range r,Collection<Condition>conList)
+    public static void filter(Grid grid,Range range,ArrayList<Condition>conList)
     {   
         FilterResult fr=new FilterResult();
-        Set<Set<Integer>>input=r.getVisibleRows();
+        Set<Set<Integer>>input=range.getVisibleRows();
         for(Set<Integer>rowList:input)
         { 
             Set<Integer>temp=new HashSet();
             for(Integer row:rowList)
             {
-                int count=0;
+                Boolean flag=Boolean.TRUE;
                 for(Condition c:conList)
                 {
-                    Value v=(Value) inputs.get(row).get(c.col);
-                    BiFunction<Value,String,Boolean> test =conditionMap.get(conditions.get(c.conNo));
-                    if(test.apply(v, c.condition))
-                        count++;
-                    else
-                        break;
+                    Value v= grid.get(row,c.getCol());
+                    BiFunction<Value,String,Boolean> test =conditionMap.get(c.getCondition());
+                    if(!test.apply(v, c.getValue()))
+                        flag=Boolean.FALSE;
                 }
-                if(count==conList.size()-1)
+                if(flag.equals(Boolean.TRUE))
                     temp.add(row);
             }
             fr.add(temp);
         }
      Filter f=new Filter(conList,fr);
-     r.addResult(f);
-     return fr;
+     range.addResult(f);
     }
 }
