@@ -12,13 +12,10 @@ import java.util.*;
  * @author admin
  */
 public class VisibleRows {
-    private Set<Set<Integer>>visibleRows;
 
-    public VisibleRows() {
-        this.visibleRows =new HashSet ();
-    }
+    private final Set<Set<Integer>> visibleRows;
 
-    public void setVisibleRows(Set<Set<Integer>> visibleRows) {
+    public VisibleRows(Set<Set<Integer>> visibleRows) {
         this.visibleRows = visibleRows;
     }
 

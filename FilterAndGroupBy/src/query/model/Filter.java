@@ -11,13 +11,13 @@ import java.util.*;
  *
  * @author admin
  */
-public class Filter  implements GroupByAndFilter{
-    
-    private final Collection<Condition>conList;
+public class Filter implements GroupByAndFilter {
+
+    private final Collection<Condition> conList;
     private FilterResult filterResult;
+
     public Filter(Collection<Condition> conList) {
         this.conList = conList;
-        this.filterResult=new FilterResult();
     }
 
     public void setFilterResult(FilterResult filterResult) {
@@ -33,5 +33,5 @@ public class Filter  implements GroupByAndFilter{
     public Map<List<Object>, VisibleRows> getGroupByMap() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

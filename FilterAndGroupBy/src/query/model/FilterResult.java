@@ -12,13 +12,11 @@ import java.util.*;
  * @author admin
  */
 public class FilterResult {
-    VisibleRows visibleRows;
-    public FilterResult()
-    {
-        this.visibleRows=new VisibleRows();
-    }
-    public void add(Set<Integer> e) {
-        this.visibleRows.getVisibleRows().add(e);
+
+    private final VisibleRows visibleRows;
+
+    public FilterResult(VisibleRows visibleRows) {
+        this.visibleRows = visibleRows;
     }
 
     public VisibleRows getVisibleRows() {

@@ -11,15 +11,15 @@ import java.util.*;
  *
  * @author admin
  */
-public class GroupBy  implements GroupByAndFilter{
-    private final Collection<Integer>colList;
+public class GroupBy implements GroupByAndFilter {
+
+    private final Collection<Integer> colList;
     private GroupByResult groupByResult;
 
     public GroupBy(Collection<Integer> colList) {
         this.colList = colList;
-        this.groupByResult=new GroupByResult();
     }
-    
+
     public void setGroupByResult(GroupByResult groupByResult) {
         this.groupByResult = groupByResult;
     }
@@ -33,7 +33,5 @@ public class GroupBy  implements GroupByAndFilter{
     public Map<List<Object>, VisibleRows> getGroupByMap() {
         return groupByResult.getGroupByMap();
     }
-    
 
 }
-    

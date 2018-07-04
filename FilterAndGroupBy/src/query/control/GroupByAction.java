@@ -18,35 +18,34 @@ import java.util.*;
  * @author admin
  */
 public class GroupByAction {
-    public void groupBy(Grid grid,QueriedRange range,Collection<Integer> colList)
-    {
-        Set<Set<Integer>>input=new HashSet();
-        GroupBy g=new GroupBy(colList);
-        GroupByResult groupByResult=new GroupByResult();
-        input=range.getVisibleRows();
-        for(Set<Integer>rowList:input)
-        {
-            HashMap<List<Object>,Set<Integer>>tempMap=new HashMap();
-            for(Integer row:rowList)
-            {
-                List<Object>groupKey=new LinkedList();
-                for(Integer col:colList)
-                {
-                     Value v= grid.get(row,col+range.startCol);
-                     groupKey.add(v.getValue());
+
+    public void groupBy(Grid grid, QueriedRange range, Collection<Integer> colList) {
+        Set<Set<Integer>> input = new HashSet();
+        GroupBy g = new GroupBy(colList);
+        Map<List<Object>, Set<Set<Integer>>> gr = new HashMap();
+        input = range.getVisibleRows();
+        for (Set<Integer> rowList : input) {
+            HashMap<List<Object>, Set<Integer>> tempMap = new HashMap();
+            for (Integer row : rowList) {
+                List<Object> groupKey = new LinkedList();
+                for (Integer col : colList) {
+                    Value v = grid.get(row + range.getStartRow(), col + range.getStartCol());
+                    groupKey.add(v.getValue());
                 }
-                tempMap.computeIfAbsent(groupKey, k->new HashSet()).add(row);
+                tempMap.computeIfAbsent(groupKey, k -> new HashSet()).add(row);
             }
-            for(Map.Entry<List<Object>,Set<Integer>>map:tempMap.entrySet())
-            {
-                List<Object> key=map.getKey();
-                groupByResult.getGroupByMap().computeIfAbsent(key, k-> new VisibleRows()).getVisibleRows().add(map.getValue());
+            for (Map.Entry<List<Object>, Set<Integer>> map : tempMap.entrySet()) {
+                List<Object> key = map.getKey();
+                gr.computeIfAbsent(key, k -> new HashSet()).add(map.getValue());
             }
         }
-        
+        Map<List<Object>, VisibleRows> groupByMap = new HashMap();
+        for (List<Object> key : gr.keySet()) {
+            VisibleRows visibleRows = new VisibleRows(gr.get(key));
+            groupByMap.put(key, visibleRows);
+        }
+        GroupByResult groupByResult = new GroupByResult(groupByMap);
         g.setGroupByResult(groupByResult);
         range.addResult(g);
     }
 }
-    
-

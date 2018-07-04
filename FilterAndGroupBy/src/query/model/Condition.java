@@ -10,15 +10,22 @@ package query.model;
  * @author admin
  */
 public class Condition {
-    private int col;
-    private ConditionsEnum condition;
-    private String value;
+
+    private final int col;
+    private final ConditionsList condition;
+    private final String value;
+
+    public Condition(int col, ConditionsList condition, String value) {
+        this.col = col;
+        this.condition = condition;
+        this.value = value;
+    }
 
     public int getCol() {
         return col;
     }
 
-    public ConditionsEnum getCondition() {
+    public ConditionsList getCondition() {
         return condition;
     }
 
@@ -26,11 +33,4 @@ public class Condition {
         return value;
     }
 
-    public Condition(int col, ConditionsEnum condition, String value) {
-        this.col = col;
-        this.condition = condition;
-        this.value = value;
-    }
-   
-    
 }

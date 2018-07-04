@@ -10,5 +10,5 @@ package grid;
  * @author admin
  */
 public enum DateFormat {
-    d,m,y
+    d, m, y
 }

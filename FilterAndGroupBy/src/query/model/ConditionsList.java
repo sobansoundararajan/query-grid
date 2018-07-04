@@ -9,6 +9,6 @@ package query.model;
  *
  * @author admin
  */
-public enum ConditionsEnum {
-    Equals,DoesNotEquals,GreaterThan,GreaterThanOrEqualTo,LessThan,LessThanOrEqualTo,BeginesWith,DoesNotBeginWith,EndsWith,DoesNotEndsWith,Contains,DoesNotContains,Matches,DoesNotMatchs
+public enum ConditionsList {
+    EQUALS, DOESNOTEQUALS, GREATERTHAN, GREATERTHANOREQUALTO, LESSTHAN, LESSTHANOREQUALTO, BEGINESWITH, DOESNOTBEGINWITH, ENDSWITH, DOESNOTENDSWITH, CONTAINS, DOESNOTCONTAINS, MATCHES, DOESNOTMATCHES
 }

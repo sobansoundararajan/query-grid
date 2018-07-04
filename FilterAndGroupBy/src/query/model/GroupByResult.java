@@ -11,22 +11,24 @@ import java.util.*;
  *
  * @author admin
  */
-public class GroupByResult{
-    Map<List<Object>,VisibleRows>groupByMap;
-    public GroupByResult()
-    {
-        this.groupByMap=new HashMap();
+public class GroupByResult {
+
+    private final Map<List<Object>, VisibleRows> groupByMap;
+
+    public GroupByResult(Map<List<Object>, VisibleRows> groupByMap) {
+        this.groupByMap = groupByMap;
     }
+
     public Map<List<Object>, VisibleRows> getGroupByMap() {
         return this.groupByMap;
-    }   
-    public VisibleRows getVisibleRows()
-    {
-        VisibleRows visibleRows=new VisibleRows();
-        for(Map.Entry<List<Object>,VisibleRows>map:this.groupByMap.entrySet())
-        {
-            visibleRows.getVisibleRows().addAll(map.getValue().getVisibleRows());
+    }
+
+    public VisibleRows getVisibleRows() {
+        Set<Set<Integer>> vr = new HashSet();
+        for (Map.Entry<List<Object>, VisibleRows> map : this.groupByMap.entrySet()) {
+            vr.addAll(map.getValue().getVisibleRows());
         }
+        VisibleRows visibleRows = new VisibleRows(vr);
         return visibleRows;
     }
 }
