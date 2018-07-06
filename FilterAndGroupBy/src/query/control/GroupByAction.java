@@ -7,10 +7,7 @@ package query.control;
 
 import grid.Grid;
 import grid.Value;
-import query.model.VisibleRows;
-import query.model.QueriedRange;
-import query.model.GroupBy;
-import query.model.GroupByResult;
+import query.model.*;
 import java.util.*;
 
 /**
@@ -19,33 +16,38 @@ import java.util.*;
  */
 public class GroupByAction {
 
-    public void groupBy(Grid grid, QueriedRange range, Collection<Integer> colList) {
-        Set<Set<Integer>> input = new HashSet();
-        GroupBy g = new GroupBy(colList);
-        Map<List<Object>, Set<Set<Integer>>> gr = new HashMap();
-        input = range.getVisibleRows();
-        for (Set<Integer> rowList : input) {
-            HashMap<List<Object>, Set<Integer>> tempMap = new HashMap();
-            for (Integer row : rowList) {
+    public void groupBy(Grid grid, QueriedRange range, Collection<Integer> colList) throws Exception {
+        
+        GroupBy groupBy = new GroupBy(colList);
+        QueriedResult orginalResult = range.getQueriedResult();
+        QueriedResult clonedResult = new QueriedResult(orginalResult.getRow(),orginalResult.getValue());
+        GroupByAction.action(grid, range, orginalResult,clonedResult, colList);
+        groupBy.setQueriedResult(clonedResult);
+        range.addResult(groupBy);
+    }
+
+    private static void action(Grid grid, QueriedRange range, QueriedResult orginalResult,QueriedResult clonedResult, Collection<Integer> colList) {
+        if (orginalResult.getNextAction().isEmpty()) {
+            HashMap<List<Object>, List<Integer>> tempMap = new HashMap();
+            for (Integer row : orginalResult.getRow()) {
                 List<Object> groupKey = new LinkedList();
                 for (Integer col : colList) {
                     Value v = grid.get(row + range.getStartRow(), col + range.getStartCol());
                     groupKey.add(v.getValue());
                 }
-                tempMap.computeIfAbsent(groupKey, k -> new HashSet()).add(row);
+                tempMap.computeIfAbsent(groupKey, k -> new LinkedList()).add(row);
             }
-            for (Map.Entry<List<Object>, Set<Integer>> map : tempMap.entrySet()) {
-                List<Object> key = map.getKey();
-                gr.computeIfAbsent(key, k -> new HashSet()).add(map.getValue());
+            clonedResult.setRow(new LinkedList ());
+            for (Map.Entry<List<Object>, List<Integer>> entry : tempMap.entrySet()) {
+                clonedResult.addNextAction(new QueriedResult(entry.getValue(), entry.getKey()));
+            }
+        } else {
+            
+            for (QueriedResult vn : orginalResult.getNextAction()) {
+                QueriedResult qr=new QueriedResult(vn.getRow(),vn.getValue());
+                clonedResult.addNextAction(qr);
+                GroupByAction.action(grid, range, vn,qr, colList);
             }
         }
-        Map<List<Object>, VisibleRows> groupByMap = new HashMap();
-        for (List<Object> key : gr.keySet()) {
-            VisibleRows visibleRows = new VisibleRows(gr.get(key));
-            groupByMap.put(key, visibleRows);
-        }
-        GroupByResult groupByResult = new GroupByResult(groupByMap);
-        g.setGroupByResult(groupByResult);
-        range.addResult(g);
     }
 }

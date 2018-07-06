@@ -57,19 +57,20 @@ public class QueriedRange {
         return this.result.get(this.result.size() - 1);
     }
 
-    public Set<Set<Integer>> getVisibleRows() {
-        VisibleRows visibleRows;
+    public QueriedResult getQueriedResult() throws Exception {
+        QueriedResult queriedResult;
         if (this.result.isEmpty()) {
-            Set<Set<Integer>> vr = new HashSet();
-            Set<Integer> temp = new LinkedHashSet();
+            List<Integer> temp = new LinkedList();
             for (int i = 0; i <= this.endRow - this.startRow; i++) {
                 temp.add(i);
             }
-            vr.add(temp);
-            visibleRows = new VisibleRows(vr);
+            queriedResult=new QueriedResult(temp,null);
+            
         } else {
-            visibleRows = this.result.get(result.size() - 1).getVisibleRows();
+           queriedResult=result.get(result.size()-1).getQueriedResult();
+           if(queriedResult==null)
+               throw new Exception("This Result is Reseted to null");
         }
-        return visibleRows.getVisibleRows();
+        return queriedResult;
     }
 }

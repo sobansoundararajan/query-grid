@@ -8,14 +8,10 @@ package query.control;
 import query.model.ConditionsList;
 import grid.Grid;
 import grid.Value;
-import query.model.Condition;
-import query.model.QueriedRange;
-import query.model.Filter;
-import query.model.FilterResult;
+import query.model.*;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
-import query.model.VisibleRows;
 
 /**
  *
@@ -25,33 +21,66 @@ public class FilterAction {
 
     static Map<ConditionsList, BiFunction<Value, String, Boolean>> conditionMap = new EnumMap<ConditionsList, BiFunction<Value, String, Boolean>>(ConditionsList.class);
 
-    public void filter(Grid grid, QueriedRange range, Collection<Condition> conList) {
-        Filter f = new Filter(conList);
-        Set<Set<Integer>> input = range.getVisibleRows();
+    public void filter(Grid grid, QueriedRange range, Collection<Condition> conList) throws Exception {
+        Filter filter = new Filter(conList);
+        QueriedResult orginalResult = range.getQueriedResult();
+        QueriedResult clonedResult = new QueriedResult(orginalResult.getRow(), orginalResult.getValue());
+        List<Integer> chiledNodes = new LinkedList ();
+        FilterAction.getCloneAndChiledNodes(orginalResult, clonedResult,chiledNodes);
+        chiledNodes = FilterAction.getFilteredRows(grid, range, conList, chiledNodes);
+        FilterAction.refineQueriedResult(clonedResult, chiledNodes);
+        filter.setQueriedResult(clonedResult);
+        range.addResult(filter);
+    }
 
-        Set<Set<Integer>> vr = new HashSet();
-        for (Set<Integer> rowList : input) {
-            Set<Integer> temp = new HashSet();
-            for (Integer row : rowList) {
-                boolean flag = true;
-                for (Condition c : conList) {
-                    Value v = grid.get(row + range.getStartRow(), c.getCol() + range.getStartCol());
-                    BiFunction<Value, String, Boolean> test = conditionMap.get(c.getCondition());
-                    if (!test.apply(v, c.getValue())) {
-                        flag = false;
-                        break;
-                    }
+    private static void getCloneAndChiledNodes(QueriedResult orginalResult, QueriedResult clonedResult,List<Integer>chiledNodes) {
+        if (!orginalResult.getNextAction().isEmpty()) {
+            for (QueriedResult nextQR : orginalResult.getNextAction()) {
+                QueriedResult nextQR1 = new QueriedResult(nextQR.getRow(), nextQR.getValue());
+                clonedResult.addNextAction(nextQR1);
+                FilterAction.getCloneAndChiledNodes(nextQR, nextQR1,chiledNodes);
+            }
+        }
+        else
+            chiledNodes.addAll(orginalResult.getRow());
+    }
+
+    private static List<Integer> getFilteredRows(Grid grid, QueriedRange range, Collection<Condition> conList, List<Integer> rowList) {
+        List<Integer> temp = new LinkedList();
+        for (Integer row : rowList) {
+            boolean flag = true;
+            for (Condition c : conList) {
+                Value v = grid.get(row + range.getStartRow(), c.getCol() + range.getStartCol());
+                BiFunction<Value, String, Boolean> test = conditionMap.get(c.getCondition());
+                if (!test.apply(v, c.getValue())) {
+                    flag = false;
+                    break;
                 }
-                if (flag) {
+            }
+            if (flag) {
+                temp.add(row);
+            }
+        }
+        return temp;
+    }
+
+    private static void refineQueriedResult(QueriedResult clonedResult, List<Integer> filteredRows) {
+        if (!clonedResult.getNextAction().isEmpty()) {
+            for (QueriedResult nextQR1 : clonedResult.getNextAction()) {
+                FilterAction.refineQueriedResult(nextQR1, filteredRows);
+            }
+
+        } else {
+            List<Integer> temp = new LinkedList();
+            for (Integer row : filteredRows) {
+                if (clonedResult.getRow().contains(row)) {
                     temp.add(row);
                 }
             }
-            vr.add(temp);
+            if (!temp.isEmpty()) {
+                clonedResult.setRow(temp);
+            }
         }
-        VisibleRows visibleRows = new VisibleRows(vr);
-        FilterResult filterResult = new FilterResult(visibleRows);
-        f.setFilterResult(filterResult);
-        range.addResult(f);
     }
 
     static {

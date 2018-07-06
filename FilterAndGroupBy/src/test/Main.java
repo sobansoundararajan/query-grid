@@ -5,18 +5,11 @@
  */
 package test;
 
-import query.control.GroupByAction;
-import query.control.FilterAction;
-import query.model.ConditionsList;
+import query.control.*;
+import query.model.*;
 import grid.DateFormat;
 import grid.Grid;
 import grid.Value;
-import query.model.VisibleRows;
-import query.model.Condition;
-import query.model.QueriedRange;
-import query.model.GroupBy;
-import query.model.Filter;
-import query.model.GroupByAndFilter;
 import java.io.*;
 import java.text.ParseException;
 import java.util.*;
@@ -51,19 +44,18 @@ public class Main {
         conditions.put("does not matches", ConditionsList.DOESNOTMATCHES);
     }
 
-    public static void print(Grid grid, QueriedRange range) {
-        for (Set<Integer> p : range.getVisibleRows()) {
-            for (Integer row : p) {
-                for (int col = range.getStartCol(); col <= range.getEndCol(); col++) {
-                    Value v = grid.get(row + range.getStartRow(), col);
-                    System.out.print(v.getValue() + " ");
-                }
-                System.out.println();
+    private static void print(QueriedResult queriedResult) {
+        if (queriedResult.getNextAction().isEmpty()) {
+            System.out.println(queriedResult.getValue() + " " + queriedResult.getRow());
+        } else {
+            System.out.print(queriedResult.getValue() + " ");
+            for (QueriedResult vn : queriedResult.getNextAction()) {
+                Main.print(vn);
             }
         }
     }
 
-    public static void filter(Grid grid, QueriedRange range) {
+    private static void filter(Grid grid, QueriedRange range) throws Exception {
         Collection<Condition> conList = new ArrayList();
         int op = 1;
         while (op != 0) {
@@ -85,7 +77,7 @@ public class Main {
         f.filter(grid, range, conList);
     }
 
-    public static void groupBy(Grid grid, QueriedRange range) {
+    private static void groupBy(Grid grid, QueriedRange range) throws Exception {
         System.out.print("Enter the col Number");
         String input = scanner.nextLine();
         String[] inArr = input.split(" ");
@@ -97,7 +89,26 @@ public class Main {
         g.groupBy(grid, range, colList);
     }
 
-    public static void main(String[] args) throws FileNotFoundException, IOException, ParseException {
+    private static void sort(Grid grid, QueriedRange range) throws Exception {
+        System.out.println("Enter the col:");
+        int col = scanner.nextInt();
+        scanner.nextLine();
+        SortAction sortAction = new SortAction();
+        sortAction.sort(grid, range, col);
+
+    }
+
+    private static void reEvaluate(Grid grid, QueriedRange range) throws Exception {
+        RefershResult refershResult = new RefershResult();
+        refershResult.reEvalute(range, grid);
+    }
+
+    private static void reset(QueriedRange range) {
+        RefershResult refershResult = new RefershResult();
+        refershResult.reSet(range);
+    }
+
+    public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, Exception {
         // TODO code application logic here
         BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\admin\\Desktop\\CSVinputs.csv"));
 
@@ -127,19 +138,23 @@ public class Main {
         startCol = scanner.nextInt();
         endCol = scanner.nextInt();
         QueriedRange range = new QueriedRange(startRow, endRow, startCol, endCol);
-        Main.print(grid, range);
+        Main.print(range.getQueriedResult());
         int op = 4;
         while (op != 0) {
-            System.out.println("1-Filter\n2-GroupBy\n0-Exit");
+            System.out.println("1-Filter\n2-GroupBy\n3-Sort\n4-ReEvaluate\n5-Reset(to NULL)\n0-Exit");
             op = scanner.nextInt();
             scanner.nextLine();
             if (op == 1) {
                 Main.filter(grid, range);
             } else if (op == 2) {
                 Main.groupBy(grid, range);
-
+            } else if (op == 3) {
+                Main.sort(grid, range);
+            } else if (op == 4) {
+                Main.reEvaluate(grid, range);
+            } else if (op == 5) {
+                Main.reset(range);
             }
-            // Main.print(r);
         }
         Main.printFinalResult(grid, range);
     }
@@ -149,15 +164,17 @@ public class Main {
         int opNum = 1;
         for (GroupByAndFilter gnf : result) {
             if (gnf instanceof Filter) {
+                Filter filter = (Filter) gnf;
                 System.out.println(opNum + "#Filter");
-                System.out.println(gnf.getVisibleRows().getVisibleRows());
+                Main.print(filter.getQueriedResult());
             } else if (gnf instanceof GroupBy) {
+                GroupBy groupBy = (GroupBy) gnf;
                 System.out.println(opNum + "#GroupBy");
-                Map<List<Object>, VisibleRows> map = gnf.getGroupByMap();
-                for (Map.Entry<List<Object>, VisibleRows> entry : map.entrySet()) {
-                    System.out.println(entry.getKey());
-                    System.out.println(entry.getValue().getVisibleRows());
-                }
+                Main.print(groupBy.getQueriedResult());
+            } else if (gnf instanceof Sorting) {
+                Sorting sort = (Sorting) gnf;
+                System.out.println(opNum + "#Sort");
+                Main.print(sort.getQueriedResult());
             }
             opNum++;
             System.out.println();

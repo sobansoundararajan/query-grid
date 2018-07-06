@@ -6,6 +6,8 @@
 package query.model;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,24 +16,29 @@ import java.util.*;
 public class GroupBy implements GroupByAndFilter {
 
     private final Collection<Integer> colList;
-    private GroupByResult groupByResult;
+    private QueriedResult queriedResult;
 
     public GroupBy(Collection<Integer> colList) {
         this.colList = colList;
+        this.queriedResult=queriedResult;
     }
 
-    public void setGroupByResult(GroupByResult groupByResult) {
-        this.groupByResult = groupByResult;
+    public void setQueriedResult(QueriedResult queriedResult) {
+        this.queriedResult = queriedResult;
     }
 
+    public Collection<Integer> getColList() {
+        return colList;
+    }
     @Override
-    public VisibleRows getVisibleRows() {
-        return groupByResult.getVisibleRows();
-    }
-
-    @Override
-    public Map<List<Object>, VisibleRows> getGroupByMap() {
-        return groupByResult.getGroupByMap();
+    public QueriedResult getQueriedResult() {
+        if(queriedResult==null)
+               try {
+                   throw new Exception("This Result is Reseted to null");
+        } catch (Exception ex) {
+            Logger.getLogger(GroupBy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return this.queriedResult;
     }
 
 }

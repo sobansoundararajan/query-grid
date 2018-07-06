@@ -5,7 +5,6 @@
  */
 package query.model;
 
-import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,18 +12,16 @@ import java.util.logging.Logger;
  *
  * @author admin
  */
-public class Filter implements GroupByAndFilter {
-
-    private final Collection<Condition> conList;
+public class Sorting implements GroupByAndFilter{
+    private final int col;
     private QueriedResult queriedResult;
 
-    public Filter(Collection<Condition> conList) {
-        this.conList = conList;
-        this.queriedResult = queriedResult;
+    public Sorting(int col) {
+        this.col = col;
     }
 
-    public void setQueriedResult(QueriedResult queriedResult) {
-        this.queriedResult = queriedResult;
+    public int getCol() {
+        return col;
     }
 
     public QueriedResult getQueriedResult() {
@@ -32,12 +29,16 @@ public class Filter implements GroupByAndFilter {
                try {
                    throw new Exception("This Result is Reseted to null");
         } catch (Exception ex) {
-            Logger.getLogger(Filter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Sorting.class.getName()).log(Level.SEVERE, null, ex);
         }
         return queriedResult;
     }
-    public Collection<Condition> getConList() {
-        return conList;
-    }
 
+    public void setQueriedResult(QueriedResult queriedResult) {
+        this.queriedResult = queriedResult;
+    }
+    
+    
+    
+    
 }

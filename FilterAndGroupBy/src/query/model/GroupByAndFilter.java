@@ -14,7 +14,6 @@ import java.util.Map;
  */
 public interface GroupByAndFilter {
 
-    public VisibleRows getVisibleRows();
+    public QueriedResult getQueriedResult();
 
-    public Map<List<Object>, VisibleRows> getGroupByMap();
 }
