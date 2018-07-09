@@ -56,7 +56,7 @@ public class Main {
     }
 
     private static void filter(Grid grid, QueriedRange range) throws Exception {
-        Collection<Condition> conList = new ArrayList();
+        Collection<FilterCondition> conList = new ArrayList();
         int op = 1;
         while (op != 0) {
             System.out.println("Enter the col Number");
@@ -67,7 +67,7 @@ public class Main {
             }
             String condition = scanner.nextLine().toLowerCase();
             String value = scanner.nextLine();
-            Condition c = new Condition(col, conditions.get(condition), value);
+            FilterCondition c = new FilterCondition(col, conditions.get(condition), value);
             conList.add(c);
             System.out.println("0-Finish");
             op = scanner.nextInt();
@@ -90,11 +90,18 @@ public class Main {
     }
 
     private static void sort(Grid grid, QueriedRange range) throws Exception {
-        System.out.println("Enter the col:");
-        int col = scanner.nextInt();
-        scanner.nextLine();
+        System.out.println("Enter the cols:");
+        String column = scanner.nextLine();
+        String[] colArr = column.split(" ");
+        List<Integer> col = new LinkedList();
+        for (String colStr : colArr) {
+            col.add(Integer.valueOf(colStr));
+        }
+         System.out.println("Sort ASCENDING/DESCENDING");
+        SortingCriteria ascOrDec = SortingCriteria.valueOf(scanner.next());
+        SortingCondition sortingCondition = new SortingCondition(ascOrDec, col);
         SortAction sortAction = new SortAction();
-        sortAction.sort(grid, range, col);
+        sortAction.sort(grid, range, sortingCondition);
 
     }
 

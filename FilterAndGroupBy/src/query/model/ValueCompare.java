@@ -9,6 +9,7 @@ import grid.DataTypes;
 import grid.Grid;
 import grid.Value;
 import java.util.Comparator;
+import java.util.List;
 import query.model.QueriedRange;
 
 /**
@@ -17,11 +18,11 @@ import query.model.QueriedRange;
  */
 public class ValueCompare implements Comparator<Integer> {
     
-    private int col;
+    private List<Integer> colList;
     private QueriedRange range;
     private Grid grid;
-    public ValueCompare(int col,QueriedRange range,Grid grid) {
-        this.col = col;
+    public ValueCompare(List<Integer> colList,QueriedRange range,Grid grid) {
+        this.colList = colList;
         this.range=range;
         this.grid=grid;
     }
@@ -29,14 +30,23 @@ public class ValueCompare implements Comparator<Integer> {
     @Override
     public int compare(Integer r1, Integer r2) {
         
+        for(Integer col:colList)
+        {
+        
         if(grid.get(r1, col).getType().equals(DataTypes.String))
         {
-            return grid.get(r1+range.getStartRow(), col+range.getStartCol()).getValue().toString().compareTo(grid.get(r2+range.getStartRow(), col+range.getStartCol()).getValue().toString());
+            int value=grid.get(r1+range.getStartRow(), col+range.getStartCol()).getValue().toString().compareTo(grid.get(r2+range.getStartRow(), col+range.getStartCol()).getValue().toString());
+            if(value!=0)
+                return value;
         }
         else
         {
-            return (int) (((double)grid.get(r1+range.getStartRow(), col+range.getStartCol()).getValue())-((double)grid.get(r1+range.getStartRow(), col+range.getStartCol()).getValue()));
+            int value=(int) (((double)grid.get(r1+range.getStartRow(), col+range.getStartCol()).getValue())-((double)grid.get(r1+range.getStartRow(), col+range.getStartCol()).getValue()));
+            if(value!=0)
+                return value;
         }
+        }
+        return 0;
     }
     
 }

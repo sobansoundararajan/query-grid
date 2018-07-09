@@ -5,6 +5,7 @@
  */
 package query.model;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,15 +14,15 @@ import java.util.logging.Logger;
  * @author admin
  */
 public class Sorting implements GroupByAndFilter{
-    private final int col;
+    private final SortingCondition sortingCondition;
     private QueriedResult queriedResult;
 
-    public Sorting(int col) {
-        this.col = col;
+    public Sorting(SortingCondition sortingCondition) {
+        this.sortingCondition = sortingCondition;
     }
 
-    public int getCol() {
-        return col;
+    public SortingCondition getSortingCondition() {
+        return this.sortingCondition;
     }
 
     public QueriedResult getQueriedResult() {

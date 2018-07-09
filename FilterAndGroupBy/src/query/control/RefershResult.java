@@ -34,7 +34,7 @@ public class RefershResult {
             {
                 Sorting sort=(Sorting)gnf;
                 SortAction sortAction=new SortAction();
-                sortAction.sort(grid, range, sort.getCol());
+                sortAction.sort(grid, range, sort.getSortingCondition());
             }
         }
     }

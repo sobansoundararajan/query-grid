@@ -15,10 +15,10 @@ import java.util.logging.Logger;
  */
 public class Filter implements GroupByAndFilter {
 
-    private final Collection<Condition> conList;
+    private final Collection<FilterCondition> conList;
     private QueriedResult queriedResult;
 
-    public Filter(Collection<Condition> conList) {
+    public Filter(Collection<FilterCondition> conList) {
         this.conList = conList;
         this.queriedResult = queriedResult;
     }
@@ -36,7 +36,7 @@ public class Filter implements GroupByAndFilter {
         }
         return queriedResult;
     }
-    public Collection<Condition> getConList() {
+    public Collection<FilterCondition> getConList() {
         return conList;
     }
 

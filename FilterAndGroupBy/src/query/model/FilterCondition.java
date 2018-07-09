@@ -9,13 +9,13 @@ package query.model;
  *
  * @author admin
  */
-public class Condition {
+public class FilterCondition {
 
     private final int col;
     private final ConditionsList condition;
     private final String value;
 
-    public Condition(int col, ConditionsList condition, String value) {
+    public FilterCondition(int col, ConditionsList condition, String value) {
         this.col = col;
         this.condition = condition;
         this.value = value;

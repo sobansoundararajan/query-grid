@@ -21,7 +21,7 @@ public class FilterAction {
 
     static Map<ConditionsList, BiFunction<Value, String, Boolean>> conditionMap = new EnumMap<ConditionsList, BiFunction<Value, String, Boolean>>(ConditionsList.class);
 
-    public void filter(Grid grid, QueriedRange range, Collection<Condition> conList) throws Exception {
+    public void filter(Grid grid, QueriedRange range, Collection<FilterCondition> conList) throws Exception {
         Filter filter = new Filter(conList);
         QueriedResult orginalResult = range.getQueriedResult();
         QueriedResult clonedResult = new QueriedResult(orginalResult.getRow(), orginalResult.getValue());
@@ -31,7 +31,7 @@ public class FilterAction {
         range.addResult(filter);
     }
 
-    private static void filterAction(Grid grid, QueriedRange range, QueriedResult orginalResult, QueriedResult clonedResult, Collection<Condition> conList, List<QueriedResult> nextAction) {
+    private static void filterAction(Grid grid, QueriedRange range, QueriedResult orginalResult, QueriedResult clonedResult, Collection<FilterCondition> conList, List<QueriedResult> nextAction) {
         if (!orginalResult.getNextAction().isEmpty()) {
             for (QueriedResult nextOR : orginalResult.getNextAction()) {
                 QueriedResult nextCR = new QueriedResult(nextOR.getRow(), nextOR.getValue());
@@ -42,7 +42,7 @@ public class FilterAction {
             List<Integer> temp = new LinkedList();
             for (Integer row : orginalResult.getRow()) {
                 boolean flag = true;
-                for (Condition c : conList) {
+                for (FilterCondition c : conList) {
                     Value v = grid.get(row + range.getStartRow(), c.getCol() + range.getStartCol());
                     BiFunction<Value, String, Boolean> test = conditionMap.get(c.getCondition());
                     if (!test.apply(v, c.getValue())) {
