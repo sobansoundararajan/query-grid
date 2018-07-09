@@ -68,7 +68,7 @@ public class ValueParser {
                     if (df.get(i) == DateFormat.d) {
                         format += "dd/";
                     } else if (df.get(i) == DateFormat.m) {
-                        format += "mm/";
+                        format += "MM/";
                     } else if (df.get(i) == DateFormat.y && temp[i].length() == 4) {
                         format += "yyyy/";
                     } else if (df.get(i) == DateFormat.y && temp[i].length() == 2) {
