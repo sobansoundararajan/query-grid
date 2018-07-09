@@ -25,61 +25,41 @@ public class FilterAction {
         Filter filter = new Filter(conList);
         QueriedResult orginalResult = range.getQueriedResult();
         QueriedResult clonedResult = new QueriedResult(orginalResult.getRow(), orginalResult.getValue());
-        List<Integer> chiledNodes = new LinkedList ();
-        FilterAction.getCloneAndChiledNodes(orginalResult, clonedResult,chiledNodes);
-        chiledNodes = FilterAction.getFilteredRows(grid, range, conList, chiledNodes);
-        FilterAction.refineQueriedResult(clonedResult, chiledNodes);
+        List<Integer> chiledNodes = new LinkedList();
+        FilterAction.filterAction(grid, range, orginalResult, clonedResult, conList, clonedResult.getNextAction());
         filter.setQueriedResult(clonedResult);
         range.addResult(filter);
     }
 
-    private static void getCloneAndChiledNodes(QueriedResult orginalResult, QueriedResult clonedResult,List<Integer>chiledNodes) {
+    private static void filterAction(Grid grid, QueriedRange range, QueriedResult orginalResult, QueriedResult clonedResult, Collection<Condition> conList, List<QueriedResult> nextAction) {
         if (!orginalResult.getNextAction().isEmpty()) {
-            for (QueriedResult nextQR : orginalResult.getNextAction()) {
-                QueriedResult nextQR1 = new QueriedResult(nextQR.getRow(), nextQR.getValue());
-                clonedResult.addNextAction(nextQR1);
-                FilterAction.getCloneAndChiledNodes(nextQR, nextQR1,chiledNodes);
+            for (QueriedResult nextOR : orginalResult.getNextAction()) {
+                QueriedResult nextCR = new QueriedResult(nextOR.getRow(), nextOR.getValue());
+                clonedResult.addNextAction(nextCR);
+                FilterAction.filterAction(grid, range, nextOR, nextCR, conList, clonedResult.getNextAction());
             }
-        }
-        else
-            chiledNodes.addAll(orginalResult.getRow());
-    }
-
-    private static List<Integer> getFilteredRows(Grid grid, QueriedRange range, Collection<Condition> conList, List<Integer> rowList) {
-        List<Integer> temp = new LinkedList();
-        for (Integer row : rowList) {
-            boolean flag = true;
-            for (Condition c : conList) {
-                Value v = grid.get(row + range.getStartRow(), c.getCol() + range.getStartCol());
-                BiFunction<Value, String, Boolean> test = conditionMap.get(c.getCondition());
-                if (!test.apply(v, c.getValue())) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag) {
-                temp.add(row);
-            }
-        }
-        return temp;
-    }
-
-    private static void refineQueriedResult(QueriedResult clonedResult, List<Integer> filteredRows) {
-        if (!clonedResult.getNextAction().isEmpty()) {
-            for (QueriedResult nextQR1 : clonedResult.getNextAction()) {
-                FilterAction.refineQueriedResult(nextQR1, filteredRows);
-            }
-
         } else {
             List<Integer> temp = new LinkedList();
-            for (Integer row : filteredRows) {
-                if (clonedResult.getRow().contains(row)) {
+            for (Integer row : orginalResult.getRow()) {
+                boolean flag = true;
+                for (Condition c : conList) {
+                    Value v = grid.get(row + range.getStartRow(), c.getCol() + range.getStartCol());
+                    BiFunction<Value, String, Boolean> test = conditionMap.get(c.getCondition());
+                    if (!test.apply(v, c.getValue())) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
                     temp.add(row);
                 }
             }
-            if (!temp.isEmpty()) {
+            if (temp.isEmpty()) {
+                nextAction.remove(clonedResult);
+            } else {
                 clonedResult.setRow(temp);
             }
+
         }
     }
 
