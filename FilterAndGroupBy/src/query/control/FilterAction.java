@@ -26,17 +26,19 @@ public class FilterAction {
         QueriedResult orginalResult = range.getQueriedResult();
         QueriedResult clonedResult = new QueriedResult(orginalResult.getRow(), orginalResult.getValue());
         List<Integer> chiledNodes = new LinkedList();
-        FilterAction.filterAction(grid, range, orginalResult, clonedResult, conList, clonedResult.getNextAction());
+        FilterAction.filterAction(grid, range, orginalResult, clonedResult, conList);
         filter.setQueriedResult(clonedResult);
         range.addResult(filter);
     }
 
-    private static void filterAction(Grid grid, QueriedRange range, QueriedResult orginalResult, QueriedResult clonedResult, Collection<FilterCondition> conList, List<QueriedResult> nextAction) {
+    private static void filterAction(Grid grid, QueriedRange range, QueriedResult orginalResult, QueriedResult clonedResult, Collection<FilterCondition> conList) {
         if (!orginalResult.getNextAction().isEmpty()) {
             for (QueriedResult nextOR : orginalResult.getNextAction()) {
                 QueriedResult nextCR = new QueriedResult(nextOR.getRow(), nextOR.getValue());
-                clonedResult.addNextAction(nextCR);
-                FilterAction.filterAction(grid, range, nextOR, nextCR, conList, clonedResult.getNextAction());
+                FilterAction.filterAction(grid, range, nextOR, nextCR, conList);
+                if(!nextCR.getNextAction().isEmpty() || !nextCR.getRow().isEmpty()) {
+                    clonedResult.addNextAction(nextCR);
+                }
             }
         } else {
             List<Integer> temp = new LinkedList();
@@ -54,11 +56,7 @@ public class FilterAction {
                     temp.add(row);
                 }
             }
-            if (temp.isEmpty()) {
-                nextAction.remove(clonedResult);
-            } else {
                 clonedResult.setRow(temp);
-            }
 
         }
     }

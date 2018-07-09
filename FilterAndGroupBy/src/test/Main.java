@@ -24,7 +24,6 @@ public class Main {
      * @param args the command line arguments
      */
     static Scanner scanner = new Scanner(System.in);
-    //  public static ArrayList<ArrayList<Value>>inputs=new ArrayList<ArrayList<Value>>();
     static Map<String, ConditionsList> conditions = new HashMap();
 
     static {
@@ -102,7 +101,7 @@ public class Main {
         SortingCondition sortingCondition = new SortingCondition(ascOrDec, col);
         SortAction sortAction = new SortAction();
         sortAction.sort(grid, range, sortingCondition);
-
+        
     }
 
     private static void reEvaluate(Grid grid, QueriedRange range) throws Exception {
