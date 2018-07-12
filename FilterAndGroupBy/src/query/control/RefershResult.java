@@ -6,55 +6,48 @@
 package query.control;
 
 import grid.Grid;
+import grid.Value;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import query.model.Filter;
+import query.model.FilterCondition;
+import query.model.FunctionCondition;
+import query.model.FunctionName;
 import query.model.GroupBy;
-import query.model.GroupByAndFilter;
 import query.model.QueriedRange;
 import query.model.Sorting;
+import query.model.SortingCondition;
 
 /**
  *
  * @author admin
  */
 public class RefershResult {
+
     public void reEvalute(QueriedRange range, Grid grid) throws Exception {
-        List<GroupByAndFilter> result = range.getResult();
+        List<GroupBy> result = range.getResult();
+        Map<FunctionCondition, Value> functionMap = range.getQueriedResult().getFunctionMap();
         range = new QueriedRange(range.getStartRow(), range.getEndRow(), range.getStartCol(), range.getEndCol());
-        for (GroupByAndFilter gnf : result) {
-            if (gnf instanceof Filter) {
-                Filter filter = (Filter) gnf;
-                FilterAction filterAction = new FilterAction();
-                filterAction.filter(grid, range, filter.getConList());
-            } else if (gnf instanceof GroupBy) {
-                GroupBy groupBy = (GroupBy) gnf;
-                GroupByAction groupByAction = new GroupByAction();
-                groupByAction.groupBy(grid, range, groupBy.getColList());
-            } else if (gnf instanceof Sorting)
-            {
-                Sorting sort=(Sorting)gnf;
-                SortAction sortAction=new SortAction();
-                sortAction.sort(grid, range, sort.getSortingCondition());
+        range.getQueriedResult().setFunctionMap(functionMap);
+        for (GroupBy groupBy : result) {
+            GroupByAction groupByAction = new GroupByAction();
+            groupByAction.groupBy(grid, range, groupBy.getColList());
+        }
+
+        if (!range.getFilterConList().isEmpty()) {
+            FilterAction filterAction = new FilterAction();
+            Collection<FilterCondition> filterConditions = range.getFilterConList();
+            range.getFilterConList().removeAll(filterConditions);
+            filterAction.filter(grid, range, filterConditions);
+        }
+        if (!range.getSortingCondition().isEmpty()) {
+            SortAction sortAction = new SortAction();
+            Collection<SortingCondition> sortingCondition = range.getSortingCondition();
+            range.getSortingCondition().removeAll(sortingCondition);
+            for (SortingCondition sortCondition : sortingCondition) {
+                sortAction.sort(grid, range, sortCondition);
             }
         }
     }
-        public void reSet(QueriedRange range)
-        {
-            List<GroupByAndFilter> result = range.getResult();
-        range = new QueriedRange(range.getStartRow(), range.getEndRow(), range.getStartCol(), range.getEndCol());
-        for (GroupByAndFilter gnf : result) {
-            if (gnf instanceof Filter) {
-                Filter filter = (Filter) gnf;
-                filter.setQueriedResult(null);
-            } else if (gnf instanceof GroupBy) {
-                GroupBy groupBy = (GroupBy) gnf;
-                groupBy.setQueriedResult(null);
-            } else if (gnf instanceof Sorting)
-            {
-                Sorting sort=(Sorting)gnf;
-                sort.setQueriedResult(null);
-            }
-        }
-        }
-    
 }

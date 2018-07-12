@@ -13,9 +13,9 @@ import java.util.logging.Logger;
  *
  * @author admin
  */
-public class Sorting implements GroupByAndFilter{
+public class Sorting {
     private final SortingCondition sortingCondition;
-    private QueriedResult queriedResult;
+    //private QueriedResult queriedResult;
 
     public Sorting(SortingCondition sortingCondition) {
         this.sortingCondition = sortingCondition;
@@ -25,7 +25,7 @@ public class Sorting implements GroupByAndFilter{
         return this.sortingCondition;
     }
 
-    public QueriedResult getQueriedResult() {
+    /*public QueriedResult getQueriedResult() {
         if(queriedResult==null)
                try {
                    throw new Exception("This Result is Reseted to null");
@@ -37,7 +37,7 @@ public class Sorting implements GroupByAndFilter{
 
     public void setQueriedResult(QueriedResult queriedResult) {
         this.queriedResult = queriedResult;
-    }
+    }*/
     
     
     

@@ -5,7 +5,9 @@
  */
 package query.model;
 
+import grid.Value;
 import java.util.*;
+import java.util.function.BiFunction;
 
 /**
  *
@@ -14,13 +16,19 @@ import java.util.*;
 public class QueriedResult {
 
     private List<Integer> row;
-    private List<Object> value;
+    private final List<Object> value;
     private List<QueriedResult> nextAction;
-
+    private Map<FunctionCondition,Value>functionMap;
+    
     public QueriedResult(List<Integer> row, List<Object> value) {
         this.row = row;
         this.value = value;
         this.nextAction = new LinkedList();
+        this.functionMap= new HashMap ();
+    }
+
+    public void setFunctionMap(Map<FunctionCondition, Value> functionMap) {
+        this.functionMap = functionMap;
     }
 
     public void setRow(List<Integer> row) {
@@ -47,4 +55,8 @@ public class QueriedResult {
     public void setNextAction(List<QueriedResult> nextAction) {
         this.nextAction = nextAction;
     }
+
+    public Map<FunctionCondition, Value> getFunctionMap() {
+        return functionMap;
+    }    
 }

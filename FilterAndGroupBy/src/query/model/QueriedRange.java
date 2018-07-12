@@ -5,7 +5,8 @@
  */
 package query.model;
 
-import query.model.GroupByAndFilter;
+import grid.MyException;
+import query.model.GroupBy;
 import java.util.*;
 
 /**
@@ -18,15 +19,21 @@ public class QueriedRange {
     private final int endRow;
     private final int startCol;
     private final int endCol;
+    private QueriedResult queriedResult;
 
-    private final List<GroupByAndFilter> result;
+    private final List<GroupBy> groupByResult;
+    private Collection<FilterCondition> filterCondition;
+    private Collection<SortingCondition> sortingCondition;
 
     public QueriedRange(int startRow, int endRow, int startCol, int endCol) {
         this.startRow = startRow;
         this.endRow = endRow;
         this.startCol = startCol;
         this.endCol = endCol;
-        this.result = new ArrayList();
+        this.groupByResult = new ArrayList();
+        this.filterCondition= new LinkedList ();
+        this.sortingCondition = new LinkedList();
+        this.queriedResult=null;
     }
 
     public int getStartRow() {
@@ -45,21 +52,18 @@ public class QueriedRange {
         return endCol;
     }
 
-    public void addResult(GroupByAndFilter obj) {
-        result.add(obj);
+    public void addResult(GroupBy obj) {
+        groupByResult.add(obj);
     }
 
-    public List<GroupByAndFilter> getResult() {
-        return result;
+    public List<GroupBy> getResult() {
+        return groupByResult;
     }
 
-    public GroupByAndFilter getLastOperation() {
-        return this.result.get(this.result.size() - 1);
-    }
 
     public QueriedResult getQueriedResult() throws Exception {
-        QueriedResult queriedResult;
-        if (this.result.isEmpty()) {
+        
+        if (this.queriedResult==null&&this.groupByResult.isEmpty()&&this.filterCondition.isEmpty()&&this.sortingCondition.isEmpty()) {
             List<Integer> temp = new LinkedList();
             for (int i = 0; i <= this.endRow - this.startRow; i++) {
                 temp.add(i);
@@ -67,10 +71,33 @@ public class QueriedRange {
             queriedResult=new QueriedResult(temp,null);
             
         } else {
-           queriedResult=result.get(result.size()-1).getQueriedResult();
            if(queriedResult==null)
-               throw new Exception("This Result is Reseted to null");
+               throw new MyException("This Result is Reseted to null");
         }
         return queriedResult;
+    }
+    
+        public Collection<FilterCondition> getFilterConList() {
+        return filterCondition;
+    }
+
+    public Collection<SortingCondition> getSortingCondition() {
+        return sortingCondition;
+    }
+
+    public void setQueriedResult(QueriedResult queriedResult) {
+        this.queriedResult = queriedResult;
+    }
+    
+    public int getMaxLevel()
+    {
+        QueriedResult queriedResult=this.queriedResult;
+        int count=0;
+        while(!queriedResult.getNextAction().isEmpty())
+        {
+            count++;
+            queriedResult=queriedResult.getNextAction().get(0);
+        }
+        return count;
     }
 }

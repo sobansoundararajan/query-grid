@@ -5,7 +5,7 @@
  */
 package query.control;
 
-import query.model.ConditionsList;
+import query.model.Condition;
 import grid.Grid;
 import grid.Value;
 import query.model.*;
@@ -19,30 +19,32 @@ import java.util.function.Predicate;
  */
 public class FilterAction {
 
-    static Map<ConditionsList, BiFunction<Value, String, Boolean>> conditionMap = new EnumMap<ConditionsList, BiFunction<Value, String, Boolean>>(ConditionsList.class);
+    static Map<Condition, BiFunction<Value, String, Boolean>> conditionMap = new EnumMap<Condition, BiFunction<Value, String, Boolean>>(Condition.class);
 
     public void filter(Grid grid, QueriedRange range, Collection<FilterCondition> conList) throws Exception {
-        Filter filter = new Filter(conList);
-        QueriedResult orginalResult = range.getQueriedResult();
-        QueriedResult clonedResult = new QueriedResult(orginalResult.getRow(), orginalResult.getValue());
-        List<Integer> chiledNodes = new LinkedList();
-        FilterAction.filterAction(grid, range, orginalResult, clonedResult, conList);
-        filter.setQueriedResult(clonedResult);
-        range.addResult(filter);
+        //Filter filter = new Filter(conList);
+        range.getFilterConList().addAll(conList);
+        QueriedResult queriedResult = range.getQueriedResult();
+        FilterAction.filterAction(grid, range, queriedResult, conList);
+        range.setQueriedResult(queriedResult);
+        if (!range.getQueriedResult().getFunctionMap().isEmpty()) {
+            FunctionAction.function(grid, range);
+        }
     }
 
-    private static void filterAction(Grid grid, QueriedRange range, QueriedResult orginalResult, QueriedResult clonedResult, Collection<FilterCondition> conList) {
-        if (!orginalResult.getNextAction().isEmpty()) {
-            for (QueriedResult nextOR : orginalResult.getNextAction()) {
-                QueriedResult nextCR = new QueriedResult(nextOR.getRow(), nextOR.getValue());
-                FilterAction.filterAction(grid, range, nextOR, nextCR, conList);
-                if(!nextCR.getNextAction().isEmpty() || !nextCR.getRow().isEmpty()) {
-                    clonedResult.addNextAction(nextCR);
+    private static void filterAction(Grid grid, QueriedRange range, QueriedResult queriedResult, Collection<FilterCondition> conList) {
+        if (!queriedResult.getNextAction().isEmpty()) {
+            List<QueriedResult> nodesToBeAdded = new LinkedList ();
+            for (QueriedResult nextOR : queriedResult.getNextAction()) {
+                FilterAction.filterAction(grid, range, nextOR, conList);
+                if (!(nextOR.getNextAction().isEmpty() && nextOR.getRow().isEmpty())) {
+                    nodesToBeAdded.add(nextOR);
                 }
             }
+            queriedResult.setNextAction(nodesToBeAdded);
         } else {
             List<Integer> temp = new LinkedList();
-            for (Integer row : orginalResult.getRow()) {
+            for (Integer row : queriedResult.getRow()) {
                 boolean flag = true;
                 for (FilterCondition c : conList) {
                     Value v = grid.get(row + range.getStartRow(), c.getCol() + range.getStartCol());
@@ -56,25 +58,25 @@ public class FilterAction {
                     temp.add(row);
                 }
             }
-                clonedResult.setRow(temp);
+            queriedResult.setRow(temp);
 
         }
     }
 
     static {
-        conditionMap.put(ConditionsList.EQUALS, (v1, v2) -> Utility.equals(v1, v2));
-        conditionMap.put(ConditionsList.DOESNOTEQUALS, (v1, v2) -> !Utility.equals(v1, v2));
-        conditionMap.put(ConditionsList.GREATERTHAN, (v1, v2) -> Utility.greaterThan(v1, v2));
-        conditionMap.put(ConditionsList.GREATERTHANOREQUALTO, (v1, v2) -> !Utility.lessThan(v1, v2));
-        conditionMap.put(ConditionsList.LESSTHAN, (v1, v2) -> Utility.lessThan(v1, v2));
-        conditionMap.put(ConditionsList.LESSTHANOREQUALTO, (v1, v2) -> !Utility.greaterThan(v1, v2));
-        conditionMap.put(ConditionsList.BEGINESWITH, (v1, v2) -> Utility.beginsWith(v1, v2));
-        conditionMap.put(ConditionsList.DOESNOTBEGINWITH, (v1, v2) -> !Utility.beginsWith(v1, v2));
-        conditionMap.put(ConditionsList.ENDSWITH, (v1, v2) -> Utility.endsWith(v1, v2));
-        conditionMap.put(ConditionsList.DOESNOTENDSWITH, (v1, v2) -> !Utility.endsWith(v1, v2));
-        conditionMap.put(ConditionsList.CONTAINS, (v1, v2) -> Utility.contains(v1, v2));
-        conditionMap.put(ConditionsList.DOESNOTCONTAINS, (v1, v2) -> !Utility.contains(v1, v2));
-        conditionMap.put(ConditionsList.MATCHES, (v1, v2) -> Utility.equals(v1, v2));
-        conditionMap.put(ConditionsList.DOESNOTMATCHES, (v1, v2) -> !Utility.equals(v1, v2));
+        conditionMap.put(Condition.EQUALS, (v1, v2) -> Utility.equals(v1, v2));
+        conditionMap.put(Condition.DOESNOTEQUALS, (v1, v2) -> !Utility.equals(v1, v2));
+        conditionMap.put(Condition.GREATERTHAN, (v1, v2) -> Utility.greaterThan(v1, v2));
+        conditionMap.put(Condition.GREATERTHANOREQUALTO, (v1, v2) -> !Utility.lessThan(v1, v2));
+        conditionMap.put(Condition.LESSTHAN, (v1, v2) -> Utility.lessThan(v1, v2));
+        conditionMap.put(Condition.LESSTHANOREQUALTO, (v1, v2) -> !Utility.greaterThan(v1, v2));
+        conditionMap.put(Condition.BEGINESWITH, (v1, v2) -> Utility.beginsWith(v1, v2));
+        conditionMap.put(Condition.DOESNOTBEGINWITH, (v1, v2) -> !Utility.beginsWith(v1, v2));
+        conditionMap.put(Condition.ENDSWITH, (v1, v2) -> Utility.endsWith(v1, v2));
+        conditionMap.put(Condition.DOESNOTENDSWITH, (v1, v2) -> !Utility.endsWith(v1, v2));
+        conditionMap.put(Condition.CONTAINS, (v1, v2) -> Utility.contains(v1, v2));
+        conditionMap.put(Condition.DOESNOTCONTAINS, (v1, v2) -> !Utility.contains(v1, v2));
+        conditionMap.put(Condition.MATCHES, (v1, v2) -> Utility.equals(v1, v2));
+        conditionMap.put(Condition.DOESNOTMATCHES, (v1, v2) -> !Utility.equals(v1, v2));
     }
 }

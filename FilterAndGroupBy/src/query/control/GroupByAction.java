@@ -17,16 +17,19 @@ import java.util.*;
 public class GroupByAction {
 
     public void groupBy(Grid grid, QueriedRange range, Collection<Integer> colList) throws Exception {
-        
+
         GroupBy groupBy = new GroupBy(colList);
         QueriedResult orginalResult = range.getQueriedResult();
-        QueriedResult clonedResult = new QueriedResult(orginalResult.getRow(),orginalResult.getValue());
-        GroupByAction.action(grid, range, orginalResult,clonedResult, colList);
-        groupBy.setQueriedResult(clonedResult);
+        GroupByAction.action(grid, range, orginalResult, colList);
+        range.setQueriedResult(orginalResult);
         range.addResult(groupBy);
+        if (!range.getQueriedResult().getFunctionMap().isEmpty()) {
+            FunctionAction.function(grid, range);
+        }
+        
     }
 
-    private static void action(Grid grid, QueriedRange range, QueriedResult orginalResult,QueriedResult clonedResult, Collection<Integer> colList) {
+    private static void action(Grid grid, QueriedRange range, QueriedResult orginalResult, Collection<Integer> colList) {
         if (orginalResult.getNextAction().isEmpty()) {
             HashMap<List<Object>, List<Integer>> tempMap = new HashMap();
             for (Integer row : orginalResult.getRow()) {
@@ -37,16 +40,15 @@ public class GroupByAction {
                 }
                 tempMap.computeIfAbsent(groupKey, k -> new LinkedList()).add(row);
             }
-            clonedResult.setRow(new LinkedList ());
-            for (Map.Entry<List<Object>, List<Integer>> entry : tempMap.entrySet()) {
-                clonedResult.addNextAction(new QueriedResult(entry.getValue(), entry.getKey()));
+            orginalResult.setRow(new LinkedList());
+            for (Map.Entry<List<Object>, List<Integer>> entry : tempMap.entrySet()){ 
+                orginalResult.addNextAction(new QueriedResult(entry.getValue(), entry.getKey()));
+                
             }
         } else {
-            
+
             for (QueriedResult vn : orginalResult.getNextAction()) {
-                QueriedResult qr=new QueriedResult(vn.getRow(),vn.getValue());
-                clonedResult.addNextAction(qr);
-                GroupByAction.action(grid, range, vn,qr, colList);
+                GroupByAction.action(grid, range, vn, colList);
             }
         }
     }

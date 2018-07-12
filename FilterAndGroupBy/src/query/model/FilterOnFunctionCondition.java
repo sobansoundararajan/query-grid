@@ -5,24 +5,25 @@
  */
 package query.model;
 
+import grid.Value;
+
 /**
  *
  * @author admin
  */
-public class FilterCondition {
-
-    private final int col;
+public class FilterOnFunctionCondition {
+    private final FunctionCondition fuctionCondition;
     private final Condition condition;
     private final String value;
 
-    public FilterCondition(int col, Condition condition, String value) {
-        this.col = col;
+    public FilterOnFunctionCondition(FunctionCondition fuctionCondition, Condition condition, String value) {
+        this.fuctionCondition = fuctionCondition;
         this.condition = condition;
         this.value = value;
     }
 
-    public int getCol() {
-        return col;
+    public FunctionCondition getFuctionCondition() {
+        return fuctionCondition;
     }
 
     public Condition getCondition() {
@@ -32,5 +33,5 @@ public class FilterCondition {
     public String getValue() {
         return value;
     }
-
+    
 }

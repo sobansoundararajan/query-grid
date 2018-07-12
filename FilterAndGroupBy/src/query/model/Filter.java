@@ -13,17 +13,15 @@ import java.util.logging.Logger;
  *
  * @author admin
  */
-public class Filter implements GroupByAndFilter {
+public class Filter {
 
     private final Collection<FilterCondition> conList;
-    private QueriedResult queriedResult;
 
     public Filter(Collection<FilterCondition> conList) {
         this.conList = conList;
-        this.queriedResult = queriedResult;
     }
 
-    public void setQueriedResult(QueriedResult queriedResult) {
+/*    public void setQueriedResult(QueriedResult queriedResult) {
         this.queriedResult = queriedResult;
     }
 
@@ -35,7 +33,7 @@ public class Filter implements GroupByAndFilter {
             Logger.getLogger(Filter.class.getName()).log(Level.SEVERE, null, ex);
         }
         return queriedResult;
-    }
+    }*/
     public Collection<FilterCondition> getConList() {
         return conList;
     }

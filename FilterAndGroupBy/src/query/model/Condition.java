@@ -5,15 +5,10 @@
  */
 package query.model;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  *
  * @author admin
  */
-public interface GroupByAndFilter {
-
-    public QueriedResult getQueriedResult();
-
+public enum Condition {
+    EQUALS, DOESNOTEQUALS, GREATERTHAN, GREATERTHANOREQUALTO, LESSTHAN, LESSTHANOREQUALTO, BEGINESWITH, DOESNOTBEGINWITH, ENDSWITH, DOESNOTENDSWITH, CONTAINS, DOESNOTCONTAINS, MATCHES, DOESNOTMATCHES
 }

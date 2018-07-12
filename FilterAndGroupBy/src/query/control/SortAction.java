@@ -8,6 +8,7 @@ package query.control;
 import grid.Grid;
 import java.util.Collections;
 import java.util.List;
+import query.model.FunctionCondition;
 import query.model.QueriedRange;
 import query.model.QueriedResult;
 import query.model.Sorting;
@@ -21,32 +22,31 @@ import test.Main;
  * @author admin
  */
 public class SortAction {
-    
+
     public void sort(Grid grid, QueriedRange range, SortingCondition sortingCondition) throws Exception {
-        Sorting sort = new Sorting(sortingCondition);
-        ValueCompare valueCompare = new ValueCompare(sortingCondition.getCol(), range, grid);
-        QueriedResult orginalResult = range.getQueriedResult();
-        QueriedResult clonedResult = new QueriedResult(orginalResult.getRow(), orginalResult.getValue());
-        SortAction.action(orginalResult, clonedResult, valueCompare, sortingCondition);
-        sort.setQueriedResult(clonedResult);
-        range.addResult(sort);
-        
+        //Sorting sort = new Sorting(sortingCondition);
+        range.getSortingCondition().add(sortingCondition);
+        QueriedResult queriedResult = range.getQueriedResult();
+        SortAction.action(queriedResult, grid, range, sortingCondition);
+        range.setQueriedResult(queriedResult);
+        if (!range.getQueriedResult().getFunctionMap().isEmpty()) {
+            FunctionAction.function(grid, range);
+        }
     }
 
-    private static void action(QueriedResult queriedResult, QueriedResult clonedResult, ValueCompare valueCompare, SortingCondition sortingCondition) {
+    private static void action(QueriedResult queriedResult, Grid grid, QueriedRange range, SortingCondition sortingCondition) {
         if (queriedResult.getNextAction().isEmpty()) {
             if (sortingCondition.getSortingCriteria().equals(SortingCriteria.ASCENDING)) {
-                Collections.sort(clonedResult.getRow(), valueCompare);
+                Collections.sort(queriedResult.getRow(), new ValueCompare(sortingCondition.getCol(), range, grid));
             } else {
-                Collections.sort(clonedResult.getRow(), Collections.reverseOrder(valueCompare));
+                Collections.sort(queriedResult.getRow(), Collections.reverseOrder(new ValueCompare(sortingCondition.getCol(), range, grid)));
             }
         } else {
             for (QueriedResult nextQR : queriedResult.getNextAction()) {
                 QueriedResult nextCR = new QueriedResult(nextQR.getRow(), nextQR.getValue());
-                clonedResult.getNextAction().add(nextCR);
-                SortAction.action(nextQR, nextCR, valueCompare, sortingCondition);
+                SortAction.action(nextQR, grid, range, sortingCondition);
             }
         }
     }
-    
+
 }
