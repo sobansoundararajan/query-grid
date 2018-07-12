@@ -6,7 +6,7 @@
 package query.control;
 
 import grid.Grid;
-import grid.MyException;
+import query.exception.QueriedException;
 import grid.Value;
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -40,7 +40,7 @@ public class FilterOnFunctionsAction {
     public void filterOnFunction(Grid grid,QueriedRange range, List<FilterOnFunctionCondition> conditionList, int level) throws Exception {
         if(level==0||level>range.getMaxLevel())
         {
-            throw new MyException("Operation at this Level can't be perform");
+            throw new QueriedException("Operation at this Level can't be perform");
         }
         QueriedResult queriedResult = range.getQueriedResult();
         List<FunctionCondition>functionCondition=new LinkedList ();
@@ -49,7 +49,7 @@ public class FilterOnFunctionsAction {
             functionCondition.add(condition.getFuctionCondition());
         }
         if (!queriedResult.getFunctionMap().keySet().containsAll(functionCondition)) {
-            throw new Exception("This Function is not yet performed");
+            throw new QueriedException("This Function is not yet performed");
         } else {
             FilterOnFunctionsAction.action(grid,range,queriedResult, conditionList, level);
         }
@@ -57,7 +57,7 @@ public class FilterOnFunctionsAction {
     }
 
     private static void action(Grid grid,QueriedRange range,QueriedResult queriedResult, List<FilterOnFunctionCondition> conditionList, int level) throws Exception {
-         if(level==0)
+        if(level==0)
             return ;
         List<QueriedResult> nodesToBeAdded = new LinkedList();
         level--;

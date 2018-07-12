@@ -18,9 +18,9 @@ import query.model.QueriedRange;
  */
 public class ValueCompare implements Comparator<Integer> {
     
-    private List<Integer> colList;
-    private QueriedRange range;
-    private Grid grid;
+    private final List<Integer> colList;
+    private final QueriedRange range;
+    private final Grid grid;
     public ValueCompare(List<Integer> colList,QueriedRange range,Grid grid) {
         this.colList = colList;
         this.range=range;

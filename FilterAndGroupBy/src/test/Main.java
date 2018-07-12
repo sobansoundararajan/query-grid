@@ -10,6 +10,7 @@ import query.control.*;
 import query.model.*;
 import grid.DateFormat;
 import grid.Grid;
+import query.exception.QueriedException;
 import grid.StringValue;
 import grid.Value;
 import java.io.*;
@@ -134,35 +135,61 @@ public class Main {
         FunctionAction.function(grid, range);
     }
 
-    private static void filterOnFunctions(Grid grid,QueriedRange range) throws Exception {
-        System.out.println("Maximum Level is :"+range.getMaxLevel()+"\nEnter the Level :");
-            int level=scanner.nextInt();
-            scanner.nextLine();
-        int op=1;
-        List<FilterOnFunctionCondition>filterOnFunctionsConditionList=new LinkedList ();
+    private static void filterOnFunctions(Grid grid, QueriedRange range) throws Exception {
+        System.out.println("Maximum Level is :" + range.getMaxLevel() + "\nEnter the Level :");
+        int level = scanner.nextInt();
+        scanner.nextLine();
+        int op = 1;
+        List<FilterOnFunctionCondition> filterOnFunctionsConditionList = new LinkedList();
         while (op != 0) {
-            System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM");
+            System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT");
             FunctionName function = FunctionName.valueOf(scanner.next());
             System.out.println("Enter col");
             int col = scanner.nextInt();
             scanner.nextLine();
             FunctionCondition functionCondition = new FunctionCondition(col, function);
-             for (String str : conditions.keySet()) {
+            for (String str : conditions.keySet()) {
                 System.out.println(str);
-                if(str.equals("less than or equal to"))
+                if (str.equals("less than or equal to")) {
                     break;
+                }
             }
             String condition = scanner.nextLine().toLowerCase();
             String value = scanner.nextLine();
-            FilterOnFunctionCondition filterOnFunctionCondition=new FilterOnFunctionCondition(functionCondition,conditions.get(condition),value);
+            FilterOnFunctionCondition filterOnFunctionCondition = new FilterOnFunctionCondition(functionCondition, conditions.get(condition), value);
             filterOnFunctionsConditionList.add(filterOnFunctionCondition);
             System.out.println("0-Finish");
             op = scanner.nextInt();
             scanner.nextLine();
-            FilterOnFunctionsAction filterOnFunctionsAction=new FilterOnFunctionsAction ();
-            filterOnFunctionsAction.filterOnFunction(grid,range, filterOnFunctionsConditionList,level);
+            FilterOnFunctionsAction filterOnFunctionsAction = new FilterOnFunctionsAction();
+            filterOnFunctionsAction.filterOnFunction(grid, range, filterOnFunctionsConditionList, level);
         }
     }
+
+    private static void sortOnFunctions(QueriedRange range) throws QueriedException {
+        System.out.println("Maximum Level is :" + range.getMaxLevel() + "\nEnter the Level :");
+        int level = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Sort ASCENDING/DESCENDING");
+        SortingCriteria ascOrDec = SortingCriteria.valueOf(scanner.next());
+        int op = 1;
+        List<FunctionCondition> functionConditionList = new LinkedList();
+        while (op != 0) {
+            System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT");
+            FunctionName function = FunctionName.valueOf(scanner.next());
+            System.out.println("Enter col");
+            int col = scanner.nextInt();
+            scanner.nextLine();
+            FunctionCondition functionCondition = new FunctionCondition(col, function);
+            functionConditionList.add(functionCondition);
+            System.out.println("0-Finish");
+            op = scanner.nextInt();
+            scanner.nextLine();
+        }
+        FunctionSortAction functionSortAction = new FunctionSortAction();
+        functionSortAction.functionSort(range, functionConditionList, ascOrDec, level);
+    }
+
     private static void reEvaluate(Grid grid, QueriedRange range) throws Exception {
         RefershResult refershResult = new RefershResult();
         refershResult.reEvalute(range, grid);
@@ -182,17 +209,17 @@ public class Main {
         dfList.add(DateFormat.y);
         String line;
         Grid grid = new Grid();
-        int r = 0;
+        int row = 0;
         while ((line = br.readLine()) != null) {
             Value v;
             line = line.substring(1, line.length() - 1);
             String[] in = line.split("\",\"");
             for (int i = 0; i < in.length; i++) {
                 v = ValueParser.TypeandValue(in[i], dfList);
-                grid.set(r, i, v);
+                grid.set(row, i, v);
             }
 
-            r++;
+            row++;
         }
 
         System.out.println("Enter the range");
@@ -205,7 +232,7 @@ public class Main {
         Main.print(range.getQueriedResult());
         int op = 4;
         while (op != 0) {
-            System.out.println("1-Filter\n2-GroupBy\n3-Sort\n4-Function\n5-FilterOnFunctions\n6-ReEvaluate\n7-Reset(to NULL)\n0-Exit");
+            System.out.println("1-Filter\n2-GroupBy\n3-Sort\n4-Function\n5-Filter On Functions\n6-Sort on Functions\n7-ReEvaluate\n8-Reset(to NULL)\n0-Exit");
             op = scanner.nextInt();
             scanner.nextLine();
             if (op == 0) {
@@ -218,11 +245,13 @@ public class Main {
                 Main.sort(grid, range);
             } else if (op == 4) {
                 Main.function(grid, range);
-            }else if(op==5){
-                Main.filterOnFunctions(grid,range);
+            } else if (op == 5) {
+                Main.filterOnFunctions(grid, range);
             } else if (op == 6) {
-                Main.reEvaluate(grid, range);
+                Main.sortOnFunctions(range);
             } else if (op == 7) {
+                Main.reEvaluate(grid, range);
+            } else if (op == 8) {
                 Main.reset(range);
             }
             Main.print(range.getQueriedResult());
@@ -254,5 +283,4 @@ public class Main {
         }
 
     }*/
-
 }

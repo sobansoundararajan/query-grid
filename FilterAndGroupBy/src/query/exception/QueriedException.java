@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package grid;
+package query.exception;
 
 /**
  *
  * @author admin
  */
-public class MyException extends Exception {
+public class QueriedException extends Exception {
 
-    public MyException(String string) {
+    public QueriedException(String string) {
         super(string);
     }
     

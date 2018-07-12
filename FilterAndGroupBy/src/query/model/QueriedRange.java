@@ -5,7 +5,7 @@
  */
 package query.model;
 
-import grid.MyException;
+import query.exception.QueriedException;
 import query.model.GroupBy;
 import java.util.*;
 
@@ -61,7 +61,7 @@ public class QueriedRange {
     }
 
 
-    public QueriedResult getQueriedResult() throws Exception {
+    public QueriedResult getQueriedResult() throws QueriedException {
         
         if (this.queriedResult==null&&this.groupByResult.isEmpty()&&this.filterCondition.isEmpty()&&this.sortingCondition.isEmpty()) {
             List<Integer> temp = new LinkedList();
@@ -72,7 +72,7 @@ public class QueriedRange {
             
         } else {
            if(queriedResult==null)
-               throw new MyException("This Result is Reseted to null");
+               throw new QueriedException("This Result is Reseted to null");
         }
         return queriedResult;
     }
