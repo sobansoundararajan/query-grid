@@ -54,6 +54,7 @@ public class FilterOnFunctionsAction {
             FilterOnFunctionsAction.action(grid,range,queriedResult, conditionList, level);
         }
         range.setQueriedResult(queriedResult);
+        FunctionAction.function(grid, range);
     }
 
     private static void action(Grid grid,QueriedRange range,QueriedResult queriedResult, List<FilterOnFunctionCondition> conditionList, int level) throws Exception {
@@ -75,6 +76,5 @@ public class FilterOnFunctionsAction {
             }
         }
         queriedResult.setNextAction(nodesToBeAdded);
-        FunctionAction.function(grid, range);
     }
 }
