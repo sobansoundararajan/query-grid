@@ -17,15 +17,16 @@ import query.model.*;
  */
 public class FunctionSortAction {
 
-    public void functionSort(QueriedRange range, List<FunctionCondition> functionConditionList,SortingCriteria sortingCriteria, int level) throws QueriedException {
-        if (level == 0 || level > range.getMaxLevel()) {
+    public void functionSort(QueriedRange range,FunctionSortCondition functionSortCondition) throws QueriedException {
+        range.getFunctionSortCondition().add(functionSortCondition);
+        if (functionSortCondition.getLevel() == 0 || functionSortCondition.getLevel() > range.getMaxLevel()) {
             throw new QueriedException("Operation at this Level can't be perform");
         }
         QueriedResult queriedResult = range.getQueriedResult();
-        if (!queriedResult.getFunctionMap().keySet().containsAll(functionConditionList)) {
+        if (!queriedResult.getFunctionMap().keySet().containsAll(functionSortCondition.getFunctionConditionList())) {
             throw new QueriedException("This Function is not yet performed");
         } else {
-            FunctionSortAction.action(queriedResult, functionConditionList,sortingCriteria, level);
+            FunctionSortAction.action(queriedResult, functionSortCondition.getFunctionConditionList(),functionSortCondition.getSortingCriteria(), functionSortCondition.getLevel());
         }
         range.setQueriedResult(queriedResult);
     }

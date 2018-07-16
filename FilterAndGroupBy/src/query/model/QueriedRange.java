@@ -24,6 +24,8 @@ public class QueriedRange {
     private final List<GroupBy> groupByResult;
     private Collection<FilterCondition> filterCondition;
     private Collection<SortingCondition> sortingCondition;
+    private List<FilterOnFunctionCondition> conditionList;
+    private List<FunctionSortCondition> functionSortCondition;
 
     public QueriedRange(int startRow, int endRow, int startCol, int endCol) {
         this.startRow = startRow;
@@ -99,5 +101,13 @@ public class QueriedRange {
             queriedResult=queriedResult.getNextAction().get(0);
         }
         return count;
+    }
+
+    public List<FilterOnFunctionCondition> getConditionList() {
+        return conditionList;
+    }
+
+    public List<FunctionSortCondition> getFunctionSortCondition() {
+        return functionSortCondition;
     }
 }

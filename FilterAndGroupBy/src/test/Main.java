@@ -210,13 +210,13 @@ public class Main {
             }
             String condition = scanner.nextLine().toLowerCase();
             String value = scanner.nextLine();
-            FilterOnFunctionCondition filterOnFunctionCondition = new FilterOnFunctionCondition(functionCondition, conditions.get(condition), value);
+            FilterOnFunctionCondition filterOnFunctionCondition = new FilterOnFunctionCondition(functionCondition, conditions.get(condition), value,level);
             filterOnFunctionsConditionList.add(filterOnFunctionCondition);
             System.out.println("0-Finish");
             op = scanner.nextInt();
             scanner.nextLine();
             FilterOnFunctionsAction filterOnFunctionsAction = new FilterOnFunctionsAction();
-            filterOnFunctionsAction.filterOnFunction(grid, range, filterOnFunctionsConditionList, level);
+            filterOnFunctionsAction.filterOnFunction(grid, range, filterOnFunctionsConditionList);
         }
     }
 
@@ -241,7 +241,7 @@ public class Main {
             scanner.nextLine();
         }
         FunctionSortAction functionSortAction = new FunctionSortAction();
-        functionSortAction.functionSort(range, functionConditionList, ascOrDec, level);
+        functionSortAction.functionSort(range,new FunctionSortCondition( functionConditionList, ascOrDec, level));
     }
 
     private static void reEvaluate(Grid grid, QueriedRange range) throws Exception {

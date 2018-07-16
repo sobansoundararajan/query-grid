@@ -14,6 +14,7 @@ import query.model.Filter;
 import query.model.FilterCondition;
 import query.model.FunctionCondition;
 import query.model.FunctionName;
+import query.model.FunctionSortCondition;
 import query.model.GroupBy;
 import query.model.QueriedRange;
 import query.model.Sorting;
@@ -48,6 +49,21 @@ public class RefershResult {
             for (SortingCondition sortCondition : sortingCondition) {
                 sortAction.sort(grid, range, sortCondition);
             }
+        }
+        if(!range.getConditionList().isEmpty())
+        {
+            FilterOnFunctionsAction filterOnFunctionAction=new FilterOnFunctionsAction ();
+            filterOnFunctionAction.filterOnFunction(grid, range, range.getConditionList());
+        }
+        if(!range.getFunctionSortCondition().isEmpty())
+        {
+            List<FunctionSortCondition>functionSortConditionList=range.getFunctionSortCondition();
+            FunctionSortAction functionSortAction=new FunctionSortAction();
+            for(FunctionSortCondition functionSortCondition:functionSortConditionList)
+            {
+                functionSortAction.functionSort(range, functionSortCondition);
+            }
+                    
         }
     }
 }

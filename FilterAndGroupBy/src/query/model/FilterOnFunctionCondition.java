@@ -15,11 +15,13 @@ public class FilterOnFunctionCondition {
     private final FunctionCondition fuctionCondition;
     private final Condition condition;
     private final String value;
+    private final  int level;
 
-    public FilterOnFunctionCondition(FunctionCondition fuctionCondition, Condition condition, String value) {
+    public FilterOnFunctionCondition(FunctionCondition fuctionCondition, Condition condition, String value,int level) {
         this.fuctionCondition = fuctionCondition;
         this.condition = condition;
         this.value = value;
+        this.level=level;
     }
 
     public FunctionCondition getFuctionCondition() {
@@ -34,4 +36,7 @@ public class FilterOnFunctionCondition {
         return value;
     }
     
+    public int getLevel() {
+        return level;
+    }
 }

@@ -7,6 +7,8 @@
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/control/Utility.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/model/Normal.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/control/Functions.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/control/FilterOnFunctionsAction.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/model/FilterOnFunctionCondition.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/model/GroupByCondition.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/model/Quterly.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/control/FunctionAction.java</file>
@@ -15,8 +17,12 @@
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/model/GroupByCriteria.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/test/Main.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/model/WeekDays.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/control/FunctionSortAction.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/model/RangedCriteria.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/model/Range.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/control/RefershResult.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/model/FunctionSortCondition.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/control/SortAction.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/model/QueriedRange.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/query-grid/FilterAndGroupBy/src/query/control/GroupByAction.java</file>
         </group>

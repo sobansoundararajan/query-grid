@@ -37,16 +37,19 @@ public class FilterOnFunctionsAction {
         conditionMap.put(Condition.LESSTHANOREQUALTO, (v1, v2) -> !Utility.greaterThan(v1, v2));
     }
 
-    public void filterOnFunction(Grid grid,QueriedRange range, List<FilterOnFunctionCondition> conditionList, int level) throws Exception {
-        if(level==0||level>range.getMaxLevel())
-        {
-            throw new QueriedException("Operation at this Level can't be perform");
-        }
+    public void filterOnFunction(Grid grid,QueriedRange range, List<FilterOnFunctionCondition> conditionList) throws Exception {
         QueriedResult queriedResult = range.getQueriedResult();
+        int level=0;
+        range.getConditionList().addAll(conditionList);
         List<FunctionCondition>functionCondition=new LinkedList ();
         for(FilterOnFunctionCondition condition:conditionList)
         {
+            level=condition.getLevel();
             functionCondition.add(condition.getFuctionCondition());
+            if(level==0||level>range.getMaxLevel())
+        {
+            throw new QueriedException("Operation at this Level can't be perform");
+        }
         }
         if (!queriedResult.getFunctionMap().keySet().containsAll(functionCondition)) {
             throw new QueriedException("This Function is not yet performed");
