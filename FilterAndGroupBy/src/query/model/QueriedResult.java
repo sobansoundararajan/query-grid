@@ -16,11 +16,11 @@ import java.util.function.BiFunction;
 public class QueriedResult {
 
     private List<Integer> row;
-    private final List<Object> value;
+    private final List<Value> value;
     private List<QueriedResult> nextAction;
     private Map<FunctionCondition,Value>functionMap;
     
-    public QueriedResult(List<Integer> row, List<Object> value) {
+    public QueriedResult(List<Integer> row, List<Value> value) {
         this.row = row;
         this.value = value;
         this.nextAction = new LinkedList();
@@ -40,7 +40,7 @@ public class QueriedResult {
         return row;
     }
 
-    public List<Object> getValue() {
+    public List<Value> getValue() {
         return value;
     }
 

@@ -32,7 +32,7 @@ public class RefershResult {
         range.getQueriedResult().setFunctionMap(functionMap);
         for (GroupBy groupBy : result) {
             GroupByAction groupByAction = new GroupByAction();
-            groupByAction.groupBy(grid, range, groupBy.getColList());
+            groupByAction.groupBy(grid, range, groupBy.getGroupByConditionList());
         }
 
         if (!range.getFilterConList().isEmpty()) {

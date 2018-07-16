@@ -5,8 +5,10 @@
  */
 package query.control;
 
+import grid.DataTypes;
 import grid.Grid;
 import grid.Value;
+import java.text.ParseException;
 import query.model.*;
 import java.util.*;
 
@@ -16,11 +18,11 @@ import java.util.*;
  */
 public class GroupByAction {
 
-    public void groupBy(Grid grid, QueriedRange range, Collection<Integer> colList) throws Exception {
+    public void groupBy(Grid grid, QueriedRange range, List<GroupByCondition>groupByConditionList) throws Exception {
 
-        GroupBy groupBy = new GroupBy(colList);
+        GroupBy groupBy = new GroupBy(groupByConditionList);
         QueriedResult orginalResult = range.getQueriedResult();
-        GroupByAction.action(grid, range, orginalResult, colList);
+        GroupByAction.action(grid, range, orginalResult, groupByConditionList);
         range.setQueriedResult(orginalResult);
         range.addResult(groupBy);
         if (!range.getQueriedResult().getFunctionMap().isEmpty()) {
@@ -29,26 +31,27 @@ public class GroupByAction {
         
     }
 
-    private static void action(Grid grid, QueriedRange range, QueriedResult orginalResult, Collection<Integer> colList) {
+    private static void action(Grid grid, QueriedRange range, QueriedResult orginalResult, List<GroupByCondition>groupByConditionList) throws ParseException {
         if (orginalResult.getNextAction().isEmpty()) {
-            HashMap<List<Object>, List<Integer>> tempMap = new HashMap();
+            HashMap<List<Value>, List<Integer>> tempMap = new HashMap();
             for (Integer row : orginalResult.getRow()) {
-                List<Object> groupKey = new LinkedList();
-                for (Integer col : colList) {
-                    Value v = grid.get(row + range.getStartRow(), col + range.getStartCol());
-                    groupKey.add(v.getValue());
+                List<Value> groupKey = new LinkedList();
+                for (GroupByCondition groupByCondition: groupByConditionList) {
+                    Value value = grid.get(row + range.getStartRow(), groupByCondition.getCol() + range.getStartCol());  
+                    GroupByCriteria groupByCriteria=groupByCondition.getGroupByCriteria();
+                    groupKey.add(groupByCriteria.getKey(value));
                 }
                 tempMap.computeIfAbsent(groupKey, k -> new LinkedList()).add(row);
             }
             orginalResult.setRow(new LinkedList());
-            for (Map.Entry<List<Object>, List<Integer>> entry : tempMap.entrySet()){ 
+            for (Map.Entry<List<Value>, List<Integer>> entry : tempMap.entrySet()){ 
                 orginalResult.addNextAction(new QueriedResult(entry.getValue(), entry.getKey()));
                 
             }
         } else {
 
             for (QueriedResult vn : orginalResult.getNextAction()) {
-                GroupByAction.action(grid, range, vn, colList);
+                GroupByAction.action(grid, range, vn, groupByConditionList);
             }
         }
     }

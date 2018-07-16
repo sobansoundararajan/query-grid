@@ -16,28 +16,14 @@ import java.util.logging.Logger;
  */
 public class GroupBy {
 
-    private final Collection<Integer> colList;
-    //private QueriedResult queriedResult;
+    private final List<GroupByCondition>groupByConditionList;
 
-    public GroupBy(Collection<Integer> colList) {
-        this.colList = colList;
+    public GroupBy(List<GroupByCondition>groupByConditionList) {
+        this.groupByConditionList = groupByConditionList;
     }
-
-/*    public void setQueriedResult(QueriedResult queriedResult) {
-        this.queriedResult = queriedResult;
-    }*/
-
-    public Collection<Integer> getColList() {
-        return colList;
+    
+    public List<GroupByCondition> getGroupByConditionList() {
+        return groupByConditionList;
     }
- /*   public QueriedResult getQueriedResult() {
-        if(queriedResult==null)
-               try {
-                   throw new Exception("This Result is Reseted to null");
-        } catch (Exception ex) {
-            Logger.getLogger(GroupBy.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return this.queriedResult;
-    }*/
 
 }

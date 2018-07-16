@@ -26,6 +26,7 @@ public class Main {
     /**
      * @param args the command line arguments
      */
+    private static LinkedList<DateFormat> dfList = new LinkedList();
     private static Scanner scanner = new Scanner(System.in);
     private static Map<String, Condition> conditions = new LinkedHashMap();
 
@@ -46,9 +47,19 @@ public class Main {
         conditions.put("does not matches", Condition.DOESNOTMATCHES);
     }
 
+    public static LinkedList<DateFormat> getDateFormat() {
+        return dfList;
+    }
+
     private static void print(QueriedResult queriedResult) {
         if (queriedResult.getNextAction().isEmpty()) {
-            System.out.println(queriedResult.getValue() + " " + queriedResult.getRow());
+            if (queriedResult.getValue() != null) {
+                for (Value value : queriedResult.getValue()) {
+
+                    System.out.print(value.getValue() + " ");
+                }
+            }
+            System.out.println(queriedResult.getRow());
             Map<FunctionCondition, Value> functionMap = queriedResult.getFunctionMap();
             if (!functionMap.isEmpty()) {
                 for (Map.Entry<FunctionCondition, Value> entry : functionMap.entrySet()) {
@@ -56,7 +67,12 @@ public class Main {
                 }
             }
         } else {
-            System.out.print(queriedResult.getValue() + " ");
+            if (queriedResult.getValue() != null) {
+                for (Value value : queriedResult.getValue()) {
+
+                    System.out.print(value.getValue() + " ");
+                }
+            }
             Map<FunctionCondition, Value> functionMap = queriedResult.getFunctionMap();
             if (!functionMap.isEmpty()) {
                 for (Map.Entry<FunctionCondition, Value> entry : functionMap.entrySet()) {
@@ -92,15 +108,53 @@ public class Main {
     }
 
     private static void groupBy(Grid grid, QueriedRange range) throws Exception {
-        System.out.print("Enter the col Number");
-        String input = scanner.nextLine();
-        String[] inArr = input.split(" ");
-        Collection<Integer> colList = new LinkedList();
-        for (String inArr1 : inArr) {
-            colList.add(Integer.valueOf(inArr1));
+        List<GroupByCondition> groupByConditionList = new LinkedList();
+        int op = 1;
+        while (op != 0) {
+            GroupByCriteria groupByCriteria=null;
+            System.out.println("Enter col:");
+            int col = scanner.nextInt();
+            scanner.nextLine();
+            System.out.println("Select \nNORMAL\nMONTH\nWEEKDAYS\nYEAR\nQUTERLY\nRANGE");
+            String criteria = scanner.nextLine();
+            switch (criteria) {
+                case "NORMAL": {
+                    groupByCriteria = new Normal();
+                    break;
+                }
+                case "MONTH": {
+                    groupByCriteria = new Month();
+                    break;
+                }
+                case "WEEKDAYS": {
+                    groupByCriteria = new WeekDays();
+                    break;
+                }
+                case "QUTERLY": {
+                    groupByCriteria = new Quterly();
+                    break;
+                }
+                case "RANGE": {
+                    List<Double> rangeList = new ArrayList();
+                    System.out.print("Enter The Ranges : ");
+                    String str = scanner.nextLine();
+                    String[] strArr = str.split(" ");
+                    for (int i = 0; i < strArr.length; i++) {
+                        rangeList.add(Double.valueOf(strArr[i]));
+                    }
+                    groupByCriteria = new Range(rangeList);
+                    break;
+                }
+            }
+            if(groupByCriteria==null)
+                throw new QueriedException("GroupBy Criteria Not Set");
+            groupByConditionList.add(new GroupByCondition(groupByCriteria, col));
+            System.out.println("0-Finish");
+            op = scanner.nextInt();
+            scanner.nextLine();
         }
         GroupByAction g = new GroupByAction();
-        g.groupBy(grid, range, colList);
+        g.groupBy(grid, range, groupByConditionList);
     }
 
     private static void sort(Grid grid, QueriedRange range) throws Exception {
@@ -201,9 +255,7 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, Exception {
         // TODO code application logic here
-        BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\admin\\Desktop\\CSVinputs.csv"));
-
-        LinkedList<DateFormat> dfList = new LinkedList();
+        BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\admin\\Desktop\\CSVinputs2.csv"));
         dfList.add(DateFormat.d);
         dfList.add(DateFormat.m);
         dfList.add(DateFormat.y);

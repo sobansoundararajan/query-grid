@@ -46,14 +46,14 @@ public class ValueParser {
             value = new BooleanValue(DataTypes.Boolean, 1.0);
         } else if (input.equalsIgnoreCase("false")) {
             value = new BooleanValue(DataTypes.Boolean, 0.0);
-        } else if (!input.matches(".*[a-zA-Z]+.*") && (input.contains("/"))) {
+        } else if (!input.matches(".*[a-zA-Z]+.*") && ((input.contains("-")) && input.indexOf("-") != 0) || input.contains("/") || input.contains(".") || input.contains(",")) {
             int f = 1, i;
-            HashMap<DateFormat, Integer> dm = new HashMap<DateFormat, Integer>();
-            String[] temp = input.split("/");
+            HashMap<DateFormat, Integer> dateMap = new HashMap<DateFormat, Integer>();
+            String[] temp = input.split("-");
             String format = "";
             if (temp.length == 3) {
                 for (i = 0; i < 3; i++) {
-                    if (!isNum(temp[i])) {
+                    if (!isNum(temp[i]) || (temp[0].length() > 2 && temp[1].length() > 2 && (temp[2].length() != 2 || temp[2].length() != 4))) {
                         f = 0;
                         value = new StringValue(DataTypes.String, input);
                     }
@@ -64,7 +64,7 @@ public class ValueParser {
             if (f == 1) {
                 for (i = 0; i < 3; i++) {
                     int t = Integer.valueOf(temp[i]);
-                    dm.put(df.get(i), t);
+                    dateMap.put(df.get(i), t);
                     if (df.get(i) == DateFormat.d) {
                         format += "dd/";
                     } else if (df.get(i) == DateFormat.m) {
@@ -76,12 +76,21 @@ public class ValueParser {
                     }
                 }
                 format = format.substring(0, format.length() - 1);
-            }
-            if (dm.get(DateFormat.m) > 0 && dm.get(DateFormat.m) <= 12 && (dm.get(DateFormat.d) <= days[dm.get(DateFormat.m)] || ((dm.get(DateFormat.y) % 4 == 0) && dm.get(DateFormat.m) == 2) && dm.get(DateFormat.d) == 29)) {
-                Date date = new SimpleDateFormat(format).parse(input);
+                if (dateMap.get(DateFormat.m) > 0 && dateMap.get(DateFormat.m) <= 12 && (dateMap.get(DateFormat.d) <= days[dateMap.get(DateFormat.m)] || ((dateMap.get(DateFormat.y) % 4 == 0) && dateMap.get(DateFormat.m) == 2) && dateMap.get(DateFormat.d) == 29)) {
+                    if(input.contains("-")){
+                        input = input.replace('-', '/');
+                    }else if(input.contains(".")){
+                        input = input.replace('.', '/');
+                    }else if(input.contains(","))
+                        input = input.replace(',', '/');
 
-                num = date.getTime() / 86400000.0;
-                value = new DateValue(DataTypes.Date, num);
+                    Date date = new SimpleDateFormat(format).parse(input);
+
+                    num = date.getTime() / 86400000.0;
+                    value = new DateValue(DataTypes.Date, num);
+                }else{
+                    value = new StringValue(DataTypes.String, input);
+                }
             } else {
                 value = new StringValue(DataTypes.String, input);
             }
