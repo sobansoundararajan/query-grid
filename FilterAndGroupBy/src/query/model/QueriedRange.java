@@ -24,7 +24,7 @@ public class QueriedRange {
     private final List<GroupBy> groupByResult;
     private Collection<FilterCondition> filterCondition;
     private Collection<SortingCondition> sortingCondition;
-    private List<FilterOnFunctionCondition> conditionList;
+    private List<FilterOnFunctionCondition> FilterOnFunctionConditionList;
     private List<FunctionSortCondition> functionSortCondition;
 
     public QueriedRange(int startRow, int endRow, int startCol, int endCol) {
@@ -36,6 +36,8 @@ public class QueriedRange {
         this.filterCondition= new LinkedList ();
         this.sortingCondition = new LinkedList();
         this.queriedResult=null;
+        this.FilterOnFunctionConditionList=new LinkedList ();
+        this.functionSortCondition= new LinkedList ();
     }
 
     public int getStartRow() {
@@ -103,8 +105,8 @@ public class QueriedRange {
         return count;
     }
 
-    public List<FilterOnFunctionCondition> getConditionList() {
-        return conditionList;
+    public List<FilterOnFunctionCondition> getFilterOnFunctionConditionList() {
+        return FilterOnFunctionConditionList;
     }
 
     public List<FunctionSortCondition> getFunctionSortCondition() {

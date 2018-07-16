@@ -50,10 +50,10 @@ public class RefershResult {
                 sortAction.sort(grid, range, sortCondition);
             }
         }
-        if(!range.getConditionList().isEmpty())
+        if(!range.getFilterOnFunctionConditionList().isEmpty())
         {
             FilterOnFunctionsAction filterOnFunctionAction=new FilterOnFunctionsAction ();
-            filterOnFunctionAction.filterOnFunction(grid, range, range.getConditionList());
+            filterOnFunctionAction.filterOnFunction(grid, range, range.getFilterOnFunctionConditionList());
         }
         if(!range.getFunctionSortCondition().isEmpty())
         {

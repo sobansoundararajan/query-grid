@@ -40,7 +40,7 @@ public class FilterOnFunctionsAction {
     public void filterOnFunction(Grid grid,QueriedRange range, List<FilterOnFunctionCondition> conditionList) throws Exception {
         QueriedResult queriedResult = range.getQueriedResult();
         int level=0;
-        range.getConditionList().addAll(conditionList);
+        range.getFilterOnFunctionConditionList().addAll(conditionList);
         List<FunctionCondition>functionCondition=new LinkedList ();
         for(FilterOnFunctionCondition condition:conditionList)
         {
