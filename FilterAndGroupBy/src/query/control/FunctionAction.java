@@ -37,13 +37,13 @@ public class FunctionAction {
         interEvaluator.put(FunctionName.MINIMUM,(k)-> Functions.minimum(k));
         interEvaluator.put(FunctionName.COUNT, (k)->Functions.sum(k));
     }
-    public static void function(Grid grid, QueriedRange range) throws Exception {
+    public static void excute(Grid grid, QueriedRange range) throws Exception {
         QueriedResult queriedResult = range.getQueriedResult();
-        FunctionAction.action(grid, range, queriedResult);
+        FunctionAction.functionAction(grid, range, queriedResult);
 
     }
 
-    private static void action(Grid grid, QueriedRange range, QueriedResult queriedResult) throws Exception {
+    private static void functionAction(Grid grid, QueriedRange range, QueriedResult queriedResult) throws Exception {
         if (queriedResult.getNextAction().isEmpty()) {
             for (Map.Entry<FunctionCondition, Value> entry : range.getQueriedResult().getFunctionMap().entrySet()) {
                 FunctionCondition functionCondition = entry.getKey();
@@ -60,7 +60,7 @@ public class FunctionAction {
         } else {
             Map<FunctionCondition, List<Value>> refineMap = new HashMap();
             for (QueriedResult qr : queriedResult.getNextAction()) {
-                FunctionAction.action(grid, range, qr);
+                FunctionAction.functionAction(grid, range, qr);
                 for (Map.Entry<FunctionCondition, Value> entry : qr.getFunctionMap().entrySet()) {
                     refineMap.computeIfAbsent(entry.getKey(), k -> new LinkedList()).add(entry.getValue());
                 }

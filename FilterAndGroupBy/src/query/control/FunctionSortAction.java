@@ -9,6 +9,8 @@ import query.exception.QueriedException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import query.model.*;
 
 /**
@@ -17,32 +19,41 @@ import query.model.*;
  */
 public class FunctionSortAction {
 
-    public void functionSort(QueriedRange range,FunctionSortCondition functionSortCondition) throws QueriedException {
-        range.getFunctionSortCondition().add(functionSortCondition);
-        if (functionSortCondition.getLevel() == 0 || functionSortCondition.getLevel() > range.getMaxLevel()) {
-            throw new QueriedException("Operation at this Level can't be perform");
-        }
+    private final  Map<Integer, List<FunctionSortCondition>> functionSortConditionMap;
+
+    public FunctionSortAction(Map<Integer, List<FunctionSortCondition>> functionSortConditionMap) {
+        this.functionSortConditionMap = functionSortConditionMap;
+    }
+    
+    public void execute(QueriedRange range) throws QueriedException {
         QueriedResult queriedResult = range.getQueriedResult();
-        if (!queriedResult.getFunctionMap().keySet().containsAll(functionSortCondition.getFunctionConditionList())) {
-            throw new QueriedException("This Function is not yet performed");
-        } else {
-            FunctionSortAction.action(queriedResult, functionSortCondition.getFunctionConditionList(),functionSortCondition.getSortingCriteria(), functionSortCondition.getLevel());
+        for (Map.Entry<Integer, List<FunctionSortCondition>> entry : functionSortConditionMap.entrySet()) {
+            int level=entry.getKey();
+            List<FunctionSortCondition>functionSortConditionList=entry.getValue();
+            Set<FunctionCondition>functionConditionSet=queriedResult.getFunctionMap().keySet();
+            range.getFunctionSortCondition().computeIfAbsent(level, (k)->new LinkedList()).addAll(functionSortConditionList);
+            if (level == 0 || level > range.getMaxLevel())
+                throw new QueriedException("Operation at this Level : "+level+" can't be perform");
+            for(FunctionSortCondition functionSortCondition:functionSortConditionList)
+            {
+                FunctionCondition functionCondition=functionSortCondition.getFunctionCondition();
+                if (!functionConditionSet.contains(functionCondition))
+                    throw new QueriedException("This Function : "+functionCondition.getFunction()+" is not yet performed");
+            }
+            FunctionSortAction.functionOnSortAction(queriedResult, functionSortConditionList, level);
         }
         range.setQueriedResult(queriedResult);
-    }
+}        
 
-    private static void action(QueriedResult queriedResult, List<FunctionCondition> functionConditionList,SortingCriteria sortingCriteria, int level) {
+    private static void functionOnSortAction(QueriedResult queriedResult, List<FunctionSortCondition> functionConditionList, int level) {
         if (!queriedResult.getNextAction().isEmpty()) {
             if (level == 0) {
                 return;
             }
             level--;
-            if(sortingCriteria.equals(SortingCriteria.ASCENDING))
-                Collections.sort(queriedResult.getNextAction(), new FuctionCompare(functionConditionList));
-            else
-                Collections.sort(queriedResult.getNextAction(), Collections.reverseOrder(new FuctionCompare(functionConditionList)));
+            Collections.sort(queriedResult.getNextAction(), new FuctionCompare(functionConditionList));
             for (QueriedResult chiledNodes : queriedResult.getNextAction()) {
-                FunctionSortAction.action(chiledNodes, functionConditionList,sortingCriteria, level);
+                FunctionSortAction.functionOnSortAction(chiledNodes, functionConditionList, level);
             }
         }
     }

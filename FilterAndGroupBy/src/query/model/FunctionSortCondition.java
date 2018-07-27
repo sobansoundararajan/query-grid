@@ -12,27 +12,18 @@ import java.util.List;
  * @author admin
  */
 public class FunctionSortCondition {
-    private final  List<FunctionCondition> functionConditionList;
+    private final  FunctionCondition functionCondition;
     private final SortingCriteria sortingCriteria;
-    private final int level;
-
-    public FunctionSortCondition(List<FunctionCondition> functionConditionList, SortingCriteria sortingCriteria, int level) {
-        this.functionConditionList = functionConditionList;
+    public FunctionSortCondition(FunctionCondition functionCondition, SortingCriteria sortingCriteria) {
+        this.functionCondition = functionCondition;
         this.sortingCriteria = sortingCriteria;
-        this.level = level;
     }
 
-    public List<FunctionCondition> getFunctionConditionList() {
-        return functionConditionList;
+    public FunctionCondition getFunctionCondition() {
+        return functionCondition;
     }
 
     public SortingCriteria getSortingCriteria() {
         return sortingCriteria;
     }
-
-    public int getLevel() {
-        return level;
-    }
-    
-    
 }

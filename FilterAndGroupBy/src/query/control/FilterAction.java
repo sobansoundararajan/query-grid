@@ -20,15 +20,20 @@ import java.util.function.Predicate;
 public class FilterAction {
 
     static Map<Condition, BiFunction<Value, String, Boolean>> conditionMap = new EnumMap<Condition, BiFunction<Value, String, Boolean>>(Condition.class);
+    private final Collection<FilterCondition> conList;
 
-    public void filter(Grid grid, QueriedRange range, Collection<FilterCondition> conList) throws Exception {
+    public FilterAction(Collection<FilterCondition> conList) {
+        this.conList = conList;
+    }
+    
+    public void execute(Grid grid, QueriedRange range) throws Exception {
         //Filter filter = new Filter(conList);
         range.getFilterConList().addAll(conList);
         QueriedResult queriedResult = range.getQueriedResult();
         FilterAction.filterAction(grid, range, queriedResult, conList);
         range.setQueriedResult(queriedResult);
         if (!range.getQueriedResult().getFunctionMap().isEmpty()) {
-            FunctionAction.function(grid, range);
+            FunctionAction.excute(grid, range);
         }
     }
 

@@ -17,21 +17,27 @@ import java.util.*;
  * @author admin
  */
 public class GroupByAction {
+     private final List<GroupByCondition>groupByConditionList;
 
-    public void groupBy(Grid grid, QueriedRange range, List<GroupByCondition>groupByConditionList) throws Exception {
+    public GroupByAction(List<GroupByCondition> groupByConditionList) {
+        this.groupByConditionList = groupByConditionList;
+    }
+     
+
+    public void execute(Grid grid, QueriedRange range) throws Exception {
 
         GroupBy groupBy = new GroupBy(groupByConditionList);
         QueriedResult orginalResult = range.getQueriedResult();
-        GroupByAction.action(grid, range, orginalResult, groupByConditionList);
+        GroupByAction.groupByAction(grid, range, orginalResult, groupByConditionList);
         range.setQueriedResult(orginalResult);
         range.addResult(groupBy);
         if (!range.getQueriedResult().getFunctionMap().isEmpty()) {
-            FunctionAction.function(grid, range);
+            FunctionAction.excute(grid, range);
         }
         
     }
 
-    private static void action(Grid grid, QueriedRange range, QueriedResult orginalResult, List<GroupByCondition>groupByConditionList) throws ParseException {
+    private static void groupByAction(Grid grid, QueriedRange range, QueriedResult orginalResult, List<GroupByCondition>groupByConditionList) throws ParseException {
         if (orginalResult.getNextAction().isEmpty()) {
             HashMap<List<Value>, List<Integer>> tempMap = new HashMap();
             for (Integer row : orginalResult.getRow()) {
@@ -51,7 +57,7 @@ public class GroupByAction {
         } else {
 
             for (QueriedResult vn : orginalResult.getNextAction()) {
-                GroupByAction.action(grid, range, vn, groupByConditionList);
+                GroupByAction.groupByAction(grid, range, vn, groupByConditionList);
             }
         }
     }

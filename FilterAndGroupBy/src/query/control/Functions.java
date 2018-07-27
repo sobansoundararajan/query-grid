@@ -20,69 +20,7 @@ import query.model.QueriedResult;
  * @author admin
  */
 public class Functions {
-    
-   /* public static Value sum (Grid grid,List<Integer>rows,int col)
-    {
-         Value value=null;
-        double sum=0;
-        for(Integer row:rows)
-        {
-            value=grid.get(row,col);
-            if(!value.getType().equals(DataTypes.String))
-                sum+=(double)value.getValue();
-            else
-                return new StringValue (DataTypes.String,"");
-        }
-        return new NumberValue(value.getType(),sum);
-    }
-    public static Value average (Grid grid,List<Integer>rows,int col)
-    {
-         Value value=null;
-        double sum=0;
-        for(Integer row:rows)
-        {
-            value=grid.get(row,col);
-            if(!value.getType().equals(DataTypes.String))
-                sum+=(double)value.getValue();
-            else
-                return new StringValue (DataTypes.String,"");
-        }
-        return new NumberValue(value.getType(),sum/rows.size());
-    }
-    public static Value minimum(Grid grid,List<Integer>rows,int col)
-    {
-         Value value=null;
-        double min=Double.MAX_VALUE;
-        for(Integer row:rows)
-        {
-            value=grid.get(row,col);
-            if(!value.getType().equals(DataTypes.String))
-            {
-                if((double)value.getValue()<min)
-                    min=(double)value.getValue();
-            }
-            else
-                return new StringValue (DataTypes.String,"");
-        }
-        return new NumberValue(value.getType(),min);
-    }
-    public static Value maximum (Grid grid,List<Integer>rows,int col)
-    {
-        Value value=null;
-        double max=Double.MIN_VALUE;
-        for(Integer row:rows)
-        {
-            value=grid.get(row,col);
-            if(!value.getType().equals(DataTypes.String))
-            {
-                if((double)value.getValue()>max)
-                    max=(double)value.getValue();
-            }
-            else
-                return new StringValue (DataTypes.String,"");
-        }
-        return new NumberValue(value.getType(),max);
-    }*/
+
     public static Value sum (List<Value>valueList)
     {
         double sum=0;

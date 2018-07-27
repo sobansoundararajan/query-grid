@@ -21,23 +21,31 @@ public class QueriedRange {
     private final int endCol;
     private QueriedResult queriedResult;
 
-    private final List<GroupBy> groupByResult;
+    private final List<GroupBy> groupByConditionList;
     private Collection<FilterCondition> filterCondition;
-    private Collection<SortingCondition> sortingCondition;
-    private List<FilterOnFunctionCondition> FilterOnFunctionConditionList;
-    private List<FunctionSortCondition> functionSortCondition;
+    private SortingCondition sortingCondition;
+    private Map<Integer, List<FilterOnFunctionCondition>> FilterOnFunctionConditionList;
+    private Map<Integer, List<FunctionSortCondition>> functionSortCondition;
 
     public QueriedRange(int startRow, int endRow, int startCol, int endCol) {
         this.startRow = startRow;
         this.endRow = endRow;
         this.startCol = startCol;
         this.endCol = endCol;
-        this.groupByResult = new ArrayList();
-        this.filterCondition= new LinkedList ();
-        this.sortingCondition = new LinkedList();
-        this.queriedResult=null;
-        this.FilterOnFunctionConditionList=new LinkedList ();
-        this.functionSortCondition= new LinkedList ();
+        this.groupByConditionList = new LinkedList();
+        this.filterCondition = new LinkedList();
+        this.queriedResult = null;
+        this.sortingCondition = null;
+        this.FilterOnFunctionConditionList = new HashMap();
+        this.functionSortCondition = new HashMap();
+    }
+
+    public SortingCondition getSortingCondition() {
+        return sortingCondition;
+    }
+
+    public void setSortingCondition(SortingCondition sortingCondition) {
+        this.sortingCondition = sortingCondition;
     }
 
     public int getStartRow() {
@@ -57,59 +65,65 @@ public class QueriedRange {
     }
 
     public void addResult(GroupBy obj) {
-        groupByResult.add(obj);
+        groupByConditionList.add(obj);
     }
 
-    public List<GroupBy> getResult() {
-        return groupByResult;
+    public List<GroupBy> getGroupByConditionList() {
+        return groupByConditionList;
     }
-
 
     public QueriedResult getQueriedResult() throws QueriedException {
-        
-        if (this.queriedResult==null&&this.groupByResult.isEmpty()&&this.filterCondition.isEmpty()&&this.sortingCondition.isEmpty()) {
+
+        if (this.queriedResult == null && this.groupByConditionList.isEmpty() && this.filterCondition.isEmpty() && this.sortingCondition == null) {
             List<Integer> temp = new LinkedList();
             for (int i = 0; i <= this.endRow - this.startRow; i++) {
                 temp.add(i);
             }
-            queriedResult=new QueriedResult(temp,null);
-            
+            queriedResult = new QueriedResult(temp, null);
+
         } else {
-           if(queriedResult==null)
-               throw new QueriedException("This Result is Reseted to null");
+            if (queriedResult == null) {
+                throw new QueriedException("This Result is Reseted to null");
+            }
         }
         return queriedResult;
     }
-    
-        public Collection<FilterCondition> getFilterConList() {
+
+    public Collection<FilterCondition> getFilterConList() {
         return filterCondition;
     }
 
-    public Collection<SortingCondition> getSortingCondition() {
-        return sortingCondition;
+    public void setFilterCondition(Collection<FilterCondition> filterCondition) {
+        this.filterCondition = filterCondition;
+    }
+
+    public void setFilterOnFunctionConditionMap(Map<Integer, List<FilterOnFunctionCondition>> FilterOnFunctionConditionList) {
+        this.FilterOnFunctionConditionList = FilterOnFunctionConditionList;
+    }
+
+    public void setFunctionSortCondition(Map<Integer, List<FunctionSortCondition>> functionSortCondition) {
+        this.functionSortCondition = functionSortCondition;
     }
 
     public void setQueriedResult(QueriedResult queriedResult) {
         this.queriedResult = queriedResult;
     }
-    
-    public int getMaxLevel()
-    {
-        QueriedResult queriedResult=this.queriedResult;
-        int count=0;
-        while(!queriedResult.getNextAction().isEmpty())
-        {
+
+    public int getMaxLevel() {
+        QueriedResult queriedResult = this.queriedResult;
+        int count = 0;
+        while (!queriedResult.getNextAction().isEmpty()) {
             count++;
-            queriedResult=queriedResult.getNextAction().get(0);
+            queriedResult = queriedResult.getNextAction().get(0);
         }
         return count;
     }
 
-    public List<FilterOnFunctionCondition> getFilterOnFunctionConditionList() {
+    public Map<Integer, List<FilterOnFunctionCondition>> getFilterOnFunctionConditionMap() {
         return FilterOnFunctionConditionList;
     }
 
-    public List<FunctionSortCondition> getFunctionSortCondition() {
+    public Map<Integer, List<FunctionSortCondition>> getFunctionSortCondition() {
         return functionSortCondition;
     }
 }

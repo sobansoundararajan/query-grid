@@ -86,7 +86,7 @@ public class Main {
     }
 
     private static void filter(Grid grid, QueriedRange range) throws Exception {
-        Collection<FilterCondition> conList = new ArrayList();
+        Collection<FilterCondition> filterConditionList = new ArrayList();
         int op = 1;
         while (op != 0) {
             System.out.println("Enter the col Number");
@@ -98,20 +98,20 @@ public class Main {
             String condition = scanner.nextLine().toLowerCase();
             String value = scanner.nextLine();
             FilterCondition c = new FilterCondition(col, conditions.get(condition), value);
-            conList.add(c);
+            filterConditionList.add(c);
             System.out.println("0-Finish");
             op = scanner.nextInt();
             scanner.nextLine();
         }
-        FilterAction f = new FilterAction();
-        f.filter(grid, range, conList);
+        FilterAction filterAction = new FilterAction(filterConditionList);
+        filterAction.execute(grid, range);
     }
 
     private static void groupBy(Grid grid, QueriedRange range) throws Exception {
         List<GroupByCondition> groupByConditionList = new LinkedList();
         int op = 1;
         while (op != 0) {
-            GroupByCriteria groupByCriteria=null;
+            GroupByCriteria groupByCriteria = null;
             System.out.println("Enter col:");
             int col = scanner.nextInt();
             scanner.nextLine();
@@ -146,30 +146,35 @@ public class Main {
                     break;
                 }
             }
-            if(groupByCriteria==null)
+            if (groupByCriteria == null) {
                 throw new QueriedException("GroupBy Criteria Not Set");
+            }
             groupByConditionList.add(new GroupByCondition(groupByCriteria, col));
             System.out.println("0-Finish");
             op = scanner.nextInt();
             scanner.nextLine();
         }
-        GroupByAction g = new GroupByAction();
-        g.groupBy(grid, range, groupByConditionList);
+        GroupByAction groupByAction = new GroupByAction(groupByConditionList);
+        groupByAction.execute(grid, range);
     }
 
     private static void sort(Grid grid, QueriedRange range) throws Exception {
         System.out.println("Enter the cols:");
-        String column = scanner.nextLine();
-        String[] colArr = column.split(" ");
-        List<Integer> col = new LinkedList();
-        for (String colStr : colArr) {
-            col.add(Integer.valueOf(colStr));
+        Map<Integer, SortingCriteria> sortingConditionMap = new HashMap();
+        int op = 1;
+        while (op != 0) {
+            System.out.println("Sort ASCENDING/DESCENDING");
+            SortingCriteria ascOrDec = SortingCriteria.valueOf(scanner.next());
+            int col = scanner.nextInt();
+            scanner.nextLine();
+            sortingConditionMap.put(col, ascOrDec);
+            System.out.println("0-finish");
+            op = scanner.nextInt();
+            scanner.nextLine();
         }
-        System.out.println("Sort ASCENDING/DESCENDING");
-        SortingCriteria ascOrDec = SortingCriteria.valueOf(scanner.next());
-        SortingCondition sortingCondition = new SortingCondition(ascOrDec, col);
-        SortAction sortAction = new SortAction();
-        sortAction.sort(grid, range, sortingCondition);
+        SortingCondition sortingCondition = new SortingCondition(sortingConditionMap);
+        SortAction sortAction = new SortAction(sortingCondition);
+        sortAction.execute(grid, range);
 
     }
 
@@ -186,7 +191,7 @@ public class Main {
             op = scanner.nextInt();
             scanner.nextLine();
         }
-        FunctionAction.function(grid, range);
+        FunctionAction.excute(grid, range);
     }
 
     private static void filterOnFunctions(Grid grid, QueriedRange range) throws Exception {
@@ -194,7 +199,7 @@ public class Main {
         int level = scanner.nextInt();
         scanner.nextLine();
         int op = 1;
-        List<FilterOnFunctionCondition> filterOnFunctionsConditionList = new LinkedList();
+        Map<Integer, List<FilterOnFunctionCondition>> filterOnFunctionsConditionList = new HashMap();
         while (op != 0) {
             System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT");
             FunctionName function = FunctionName.valueOf(scanner.next());
@@ -210,13 +215,13 @@ public class Main {
             }
             String condition = scanner.nextLine().toLowerCase();
             String value = scanner.nextLine();
-            FilterOnFunctionCondition filterOnFunctionCondition = new FilterOnFunctionCondition(functionCondition, conditions.get(condition), value,level);
-            filterOnFunctionsConditionList.add(filterOnFunctionCondition);
+            FilterOnFunctionCondition filterOnFunctionCondition = new FilterOnFunctionCondition(functionCondition, conditions.get(condition), value);
+            filterOnFunctionsConditionList.computeIfAbsent(level, (k) -> new LinkedList()).add(filterOnFunctionCondition);
             System.out.println("0-Finish");
             op = scanner.nextInt();
             scanner.nextLine();
-            FilterOnFunctionsAction filterOnFunctionsAction = new FilterOnFunctionsAction();
-            filterOnFunctionsAction.filterOnFunction(grid, range, filterOnFunctionsConditionList);
+            FilterOnFunctionsAction filterOnFunctionsAction = new FilterOnFunctionsAction(filterOnFunctionsConditionList);
+            filterOnFunctionsAction.execute(grid, range);
         }
     }
 
@@ -224,29 +229,29 @@ public class Main {
         System.out.println("Maximum Level is :" + range.getMaxLevel() + "\nEnter the Level :");
         int level = scanner.nextInt();
         scanner.nextLine();
-        System.out.println("Sort ASCENDING/DESCENDING");
-        SortingCriteria ascOrDec = SortingCriteria.valueOf(scanner.next());
         int op = 1;
-        List<FunctionCondition> functionConditionList = new LinkedList();
+        Map<Integer, List<FunctionSortCondition>> functionConditionMap = new HashMap();
         while (op != 0) {
+            System.out.println("Sort ASCENDING/DESCENDING");
+            SortingCriteria ascOrDec = SortingCriteria.valueOf(scanner.next());
             System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT");
             FunctionName function = FunctionName.valueOf(scanner.next());
             System.out.println("Enter col");
             int col = scanner.nextInt();
             scanner.nextLine();
             FunctionCondition functionCondition = new FunctionCondition(col, function);
-            functionConditionList.add(functionCondition);
+            functionConditionMap.computeIfAbsent(level, (k) -> new LinkedList()).add(new FunctionSortCondition(functionCondition, ascOrDec));
             System.out.println("0-Finish");
             op = scanner.nextInt();
             scanner.nextLine();
         }
-        FunctionSortAction functionSortAction = new FunctionSortAction();
-        functionSortAction.functionSort(range,new FunctionSortCondition( functionConditionList, ascOrDec, level));
+        FunctionSortAction functionSortAction = new FunctionSortAction(functionConditionMap);
+        functionSortAction.execute(range);
     }
 
     private static void reEvaluate(Grid grid, QueriedRange range) throws Exception {
         RefershResult refershResult = new RefershResult();
-        refershResult.reEvalute(range, grid);
+        refershResult.execute(range, grid);
     }
 
     private static void reset(QueriedRange range) {
@@ -255,7 +260,7 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, Exception {
         // TODO code application logic here
-        BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\admin\\Desktop\\CSVinputs.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\admin\\Desktop\\CSVinputs2.csv"));
         dfList.add(DateFormat.d);
         dfList.add(DateFormat.m);
         dfList.add(DateFormat.y);
@@ -310,29 +315,4 @@ public class Main {
         }
 
     }
-
-    /* private static void printFinalResult(Grid grid, QueriedRange range) {
-        List<GroupByAndFilter> result = range.getResult();
-        int opNum = 1;
-        for (GroupByAndFilter gnf : result) {
-            if (gnf instanceof Filter) {
-                Filter filter = (Filter) gnf;
-                System.out.println(opNum + "#Filter");
-                Main.print(filter.getQueriedResult());
-            } else if (gnf instanceof GroupBy) {
-                GroupBy groupBy = (GroupBy) gnf;
-                System.out.println(opNum + "#GroupBy");
-                Main.print(groupBy.getQueriedResult());
-            } else if (gnf instanceof Sorting) {
-                Sorting sort = (Sorting) gnf;
-                System.out.println(opNum + "#Sort");
-                Main.print(sort.getQueriedResult());
-            }
-            opNum++;
-            System.out.println();
-            System.out.println();
-            System.out.println();
-        }
-
-    }*/
 }

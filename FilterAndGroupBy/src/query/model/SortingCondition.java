@@ -6,26 +6,21 @@
 package query.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author admin
  */
 public class SortingCondition {
-    private final SortingCriteria ascOrDec;
-    private final List<Integer> col;
 
-    public SortingCondition(SortingCriteria ascOrDec, List<Integer> col) {
-        this.ascOrDec = ascOrDec;
-        this.col = col;
+    private final Map<Integer,SortingCriteria> sortingCondition;
+
+    public SortingCondition(Map<Integer,SortingCriteria> sortingCondition) {
+        this.sortingCondition = sortingCondition;
+    }
+    public Map<Integer,SortingCriteria> getSortingCondition() {
+        return sortingCondition;
     }
 
-    public SortingCriteria getSortingCriteria() {
-        return ascOrDec;
-    }
-
-    public List<Integer> getCol() {
-        return col;
-    }
-    
 }

@@ -9,7 +9,7 @@ import grid.DataTypes;
 import grid.Grid;
 import grid.Value;
 import java.util.Comparator;
-import java.util.List;
+import java.util.Map;
 import query.model.QueriedRange;
 
 /**
@@ -17,36 +17,41 @@ import query.model.QueriedRange;
  * @author admin
  */
 public class ValueCompare implements Comparator<Integer> {
-    
-    private final List<Integer> colList;
+
+    private final Map<Integer,SortingCriteria> sortingCondition;
     private final QueriedRange range;
     private final Grid grid;
-    public ValueCompare(List<Integer> colList,QueriedRange range,Grid grid) {
-        this.colList = colList;
-        this.range=range;
-        this.grid=grid;
+
+    public ValueCompare(Map<Integer,SortingCriteria> sortingCondition, QueriedRange range, Grid grid) {
+        this.sortingCondition = sortingCondition;
+        this.range = range;
+        this.grid = grid;
     }
-    
+
     @Override
     public int compare(Integer r1, Integer r2) {
-        
-        for(Integer col:colList)
-        {
-        
-        if(grid.get(r1, col).getType().equals(DataTypes.String))
-        {
-            int value=grid.get(r1+range.getStartRow(), col+range.getStartCol()).getValue().toString().compareTo(grid.get(r2+range.getStartRow(), col+range.getStartCol()).getValue().toString());
-            if(value!=0)
-                return value;
-        }
-        else
-        {
-            int value=(int) (((double)grid.get(r1+range.getStartRow(), col+range.getStartCol()).getValue())-((double)grid.get(r1+range.getStartRow(), col+range.getStartCol()).getValue()));
-            if(value!=0)
-                return value;
-        }
+
+        for (Map.Entry<Integer,SortingCriteria>entry:sortingCondition.entrySet()) {
+            int col=entry.getKey();
+            if (grid.get(r1,col).getType().equals(DataTypes.String)) {
+                int value = grid.get(r1 + range.getStartRow(), col + range.getStartCol()).getValue().toString().compareTo(grid.get(r2 + range.getStartRow(), col + range.getStartCol()).getValue().toString());
+                if (value != 0) {
+                    if(entry.getValue().equals(SortingCriteria.ASCENDING))
+                        return value;
+                    else
+                        return -1*value;
+                }
+            } else {
+                int value = (int) (((double) grid.get(r1 + range.getStartRow(), col + range.getStartCol()).getValue()) - ((double) grid.get(r1 + range.getStartRow(), col + range.getStartCol()).getValue()));
+                if (value != 0) {
+                    if(entry.getValue().equals(SortingCriteria.ASCENDING))
+                        return value;
+                    else
+                        return -1*value;
+                }
+            }
         }
         return 0;
     }
-    
+
 }
