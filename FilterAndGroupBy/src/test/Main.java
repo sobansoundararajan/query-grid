@@ -178,7 +178,7 @@ public class Main {
         int op = 1;
         while (op != 0) {
             System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT");
-            FunctionName function = FunctionName.valueOf(scanner.next());
+            Function function = Function.valueOf(scanner.next());
             System.out.println("Enter col");
             int col = scanner.nextInt();
             FunctionCondition functionCondition = new FunctionCondition(col, function);
@@ -198,7 +198,7 @@ public class Main {
         Map<Integer, List<FunctionFilter>> filterOnFunctionsConditionList = new HashMap();
         while (op != 0) {
             System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT");
-            FunctionName function = FunctionName.valueOf(scanner.next());
+            Function function = Function.valueOf(scanner.next());
             System.out.println("Enter col");
             int col = scanner.nextInt();
             scanner.nextLine();
@@ -216,7 +216,7 @@ public class Main {
             System.out.println("0-Finish");
             op = scanner.nextInt();
             scanner.nextLine();
-            FilterOnFunctionsAction filterOnFunctionsAction = new FilterOnFunctionsAction(filterOnFunctionsConditionList);
+            FunctionFilterAction filterOnFunctionsAction = new FunctionFilterAction(filterOnFunctionsConditionList);
             filterOnFunctionsAction.execute(grid, range);
         }
     }
@@ -231,7 +231,7 @@ public class Main {
             System.out.println("Sort ASCENDING/DESCENDING");
             SortingCriteria ascOrDec = SortingCriteria.valueOf(scanner.next());
             System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT");
-            FunctionName function = FunctionName.valueOf(scanner.next());
+            Function function = Function.valueOf(scanner.next());
             System.out.println("Enter col");
             int col = scanner.nextInt();
             scanner.nextLine();

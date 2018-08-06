@@ -15,7 +15,7 @@ import java.util.Map;
 import query.model.Filter;
 import query.model.FunctionFilter;
 import query.model.FunctionCondition;
-import query.model.FunctionName;
+import query.model.Function;
 import query.model.FunctionSort;
 import query.model.GroupBy;
 import query.model.QueriedRange;
@@ -52,7 +52,7 @@ public class RefershResult {
         Map<Integer, List<FunctionFilter>> filterOnFunctionConditionMap = range.getFilterOnFunctionConditionMap();
         if (!filterOnFunctionConditionMap.isEmpty()) {
             range.setFilterOnFunctionConditionMap(new HashMap());
-            FilterOnFunctionsAction filterOnFunctionAction = new FilterOnFunctionsAction(filterOnFunctionConditionMap);
+            FunctionFilterAction filterOnFunctionAction = new FunctionFilterAction(filterOnFunctionConditionMap);
             filterOnFunctionAction.execute(grid, range);
         }
         Map<Integer, List<FunctionSort>> functionSortConditionMap = range.getFunctionSortCondition();

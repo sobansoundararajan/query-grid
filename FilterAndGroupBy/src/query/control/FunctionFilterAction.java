@@ -25,12 +25,12 @@ import query.model.QueriedResult;
  *
  * @author admin
  */
-public class FilterOnFunctionsAction {
+public class FunctionFilterAction {
 
     static Map<Condition, BiFunction<Value, String, Boolean>> conditionMap = new EnumMap<Condition, BiFunction<Value, String, Boolean>>(Condition.class);
     private final Map<Integer, List<FunctionFilter>> conditionList;
 
-    public FilterOnFunctionsAction(Map<Integer, List<FunctionFilter>> conditionList) {
+    public FunctionFilterAction(Map<Integer, List<FunctionFilter>> conditionList) {
         this.conditionList = conditionList;
     }
     static {
@@ -58,7 +58,7 @@ public class FilterOnFunctionsAction {
                 if (!functionConditionSet.contains(functionCondition)) 
                     throw new QueriedException("This Function : "+functionCondition+" is not yet performed");
             }
-            FilterOnFunctionsAction.FilterOnFunctionAction(grid, range, queriedResult, filterOnFunctionConditionList, level);
+            FunctionFilterAction.FilterOnFunctionAction(grid, range, queriedResult, filterOnFunctionConditionList, level);
         }
         range.setQueriedResult(queriedResult);
         FunctionAction.excute(grid, range);
@@ -71,7 +71,7 @@ public class FilterOnFunctionsAction {
         List<QueriedResult> nodesToBeAdded = new LinkedList();
         level--;
         for (QueriedResult nextResult : queriedResult.getNextAction()) {
-            FilterOnFunctionsAction.FilterOnFunctionAction(grid, range, nextResult, conditionList, level);
+            FunctionFilterAction.FilterOnFunctionAction(grid, range, nextResult, conditionList, level);
             boolean flag = true;
             for (FunctionFilter condition : conditionList) {
                 Value value = nextResult.getFunctionMap().get(condition.getFuctionCondition());

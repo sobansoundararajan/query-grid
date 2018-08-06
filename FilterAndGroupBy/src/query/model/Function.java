@@ -9,7 +9,7 @@ package query.model;
  *
  * @author admin
  */
-public enum FunctionName {
+public enum Function {
     SUM,AVERAGE,MINIMUM,MAXIMUM,COUNT
     
 }
