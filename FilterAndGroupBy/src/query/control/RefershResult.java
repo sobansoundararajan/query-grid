@@ -15,7 +15,7 @@ import java.util.Map;
 import query.model.Filter;
 import query.model.FunctionFilter;
 import query.model.FunctionCondition;
-import query.model.Function;
+import query.model.FunctionName;
 import query.model.FunctionSort;
 import query.model.GroupBy;
 import query.model.QueriedRange;

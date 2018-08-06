@@ -13,9 +13,9 @@ import java.util.Objects;
  */
 public class FunctionCondition {
     private final int col;
-    private final Function function;
+    private final FunctionName function;
 
-    public FunctionCondition(int col, Function function) {
+    public FunctionCondition(int col, FunctionName function) {
         this.col = col;
         this.function = function;
     }
@@ -24,7 +24,7 @@ public class FunctionCondition {
         return col;
     }
 
-    public Function getFunction() {
+    public FunctionName getFunction() {
         return function;
     }
 
