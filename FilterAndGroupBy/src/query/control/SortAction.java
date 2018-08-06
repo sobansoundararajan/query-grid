@@ -12,8 +12,7 @@ import java.util.Map;
 import query.model.FunctionCondition;
 import query.model.QueriedRange;
 import query.model.QueriedResult;
-import query.model.Sorting;
-import query.model.SortingCondition;
+import query.model.Sort;
 import query.model.SortingCriteria;
 import query.model.ValueCompare;
 import test.Main;
@@ -23,15 +22,15 @@ import test.Main;
  * @author admin
  */
 public class SortAction {
-    private final  SortingCondition sortingCondition;
+    private final  Sort sortingCondition;
 
-    public SortAction(SortingCondition sortingCondition) {
+    public SortAction(Sort sortingCondition) {
         this.sortingCondition = sortingCondition;
     }
     
 
     public void execute(Grid grid, QueriedRange range) throws Exception {
-        SortingCondition rangSortingCondition=range.getSortingCondition();
+        Sort rangSortingCondition=range.getSortingCondition();
         if(rangSortingCondition==null)
         {
             range.setSortingCondition(sortingCondition);
@@ -49,7 +48,7 @@ public class SortAction {
         }
     }
 
-    private static void sortAction(QueriedResult queriedResult, Grid grid, QueriedRange range, SortingCondition sortingCondition) {
+    private static void sortAction(QueriedResult queriedResult, Grid grid, QueriedRange range, Sort sortingCondition) {
         if (queriedResult.getNextAction().isEmpty()) {
             Collections.sort(queriedResult.getRow(), new ValueCompare(sortingCondition.getSortingCondition(), range, grid));
         } else {

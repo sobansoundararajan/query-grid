@@ -11,10 +11,10 @@ import java.util.List;
  *
  * @author admin
  */
-public class FunctionSortCondition {
+public class FunctionSort {
     private final  FunctionCondition functionCondition;
     private final SortingCriteria sortingCriteria;
-    public FunctionSortCondition(FunctionCondition functionCondition, SortingCriteria sortingCriteria) {
+    public FunctionSort(FunctionCondition functionCondition, SortingCriteria sortingCriteria) {
         this.functionCondition = functionCondition;
         this.sortingCriteria = sortingCriteria;
     }

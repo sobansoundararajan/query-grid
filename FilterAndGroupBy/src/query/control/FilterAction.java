@@ -20,9 +20,9 @@ import java.util.function.Predicate;
 public class FilterAction {
 
     static Map<Condition, BiFunction<Value, String, Boolean>> conditionMap = new EnumMap<Condition, BiFunction<Value, String, Boolean>>(Condition.class);
-    private final Collection<FilterCondition> conList;
+    private final Collection<Filter> conList;
 
-    public FilterAction(Collection<FilterCondition> conList) {
+    public FilterAction(Collection<Filter> conList) {
         this.conList = conList;
     }
     
@@ -37,7 +37,7 @@ public class FilterAction {
         }
     }
 
-    private static void filterAction(Grid grid, QueriedRange range, QueriedResult queriedResult, Collection<FilterCondition> conList) {
+    private static void filterAction(Grid grid, QueriedRange range, QueriedResult queriedResult, Collection<Filter> conList) {
         if (!queriedResult.getNextAction().isEmpty()) {
             List<QueriedResult> nodesToBeAdded = new LinkedList ();
             for (QueriedResult nextOR : queriedResult.getNextAction()) {
@@ -51,7 +51,7 @@ public class FilterAction {
             List<Integer> temp = new LinkedList();
             for (Integer row : queriedResult.getRow()) {
                 boolean flag = true;
-                for (FilterCondition c : conList) {
+                for (Filter c : conList) {
                     Value v = grid.get(row + range.getStartRow(), c.getCol() + range.getStartCol());
                     BiFunction<Value, String, Boolean> test = conditionMap.get(c.getCondition());
                     if (!test.apply(v, c.getValue())) {

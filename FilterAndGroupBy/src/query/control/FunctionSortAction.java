@@ -19,22 +19,22 @@ import query.model.*;
  */
 public class FunctionSortAction {
 
-    private final  Map<Integer, List<FunctionSortCondition>> functionSortConditionMap;
+    private final  Map<Integer, List<FunctionSort>> functionSortConditionMap;
 
-    public FunctionSortAction(Map<Integer, List<FunctionSortCondition>> functionSortConditionMap) {
+    public FunctionSortAction(Map<Integer, List<FunctionSort>> functionSortConditionMap) {
         this.functionSortConditionMap = functionSortConditionMap;
     }
     
     public void execute(QueriedRange range) throws QueriedException {
         QueriedResult queriedResult = range.getQueriedResult();
-        for (Map.Entry<Integer, List<FunctionSortCondition>> entry : functionSortConditionMap.entrySet()) {
+        for (Map.Entry<Integer, List<FunctionSort>> entry : functionSortConditionMap.entrySet()) {
             int level=entry.getKey();
-            List<FunctionSortCondition>functionSortConditionList=entry.getValue();
+            List<FunctionSort>functionSortConditionList=entry.getValue();
             Set<FunctionCondition>functionConditionSet=queriedResult.getFunctionMap().keySet();
             range.getFunctionSortCondition().computeIfAbsent(level, (k)->new LinkedList()).addAll(functionSortConditionList);
             if (level == 0 || level > range.getMaxLevel())
                 throw new QueriedException("Operation at this Level : "+level+" can't be perform");
-            for(FunctionSortCondition functionSortCondition:functionSortConditionList)
+            for(FunctionSort functionSortCondition:functionSortConditionList)
             {
                 FunctionCondition functionCondition=functionSortCondition.getFunctionCondition();
                 if (!functionConditionSet.contains(functionCondition))
@@ -45,7 +45,7 @@ public class FunctionSortAction {
         range.setQueriedResult(queriedResult);
 }        
 
-    private static void functionOnSortAction(QueriedResult queriedResult, List<FunctionSortCondition> functionConditionList, int level) {
+    private static void functionOnSortAction(QueriedResult queriedResult, List<FunctionSort> functionConditionList, int level) {
         if (!queriedResult.getNextAction().isEmpty()) {
             if (level == 0) {
                 return;

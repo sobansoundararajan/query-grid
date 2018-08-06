@@ -47,10 +47,6 @@ public class Main {
         conditions.put("does not matches", Condition.DOESNOTMATCHES);
     }
 
-    public static LinkedList<DateFormat> getDateFormat() {
-        return dfList;
-    }
-
     private static void print(QueriedResult queriedResult) {
         if (queriedResult.getNextAction().isEmpty()) {
             if (queriedResult.getValue() != null) {
@@ -86,7 +82,7 @@ public class Main {
     }
 
     private static void filter(Grid grid, QueriedRange range) throws Exception {
-        Collection<FilterCondition> filterConditionList = new ArrayList();
+        Collection<Filter> filterConditionList = new ArrayList();
         int op = 1;
         while (op != 0) {
             System.out.println("Enter the col Number");
@@ -97,7 +93,7 @@ public class Main {
             }
             String condition = scanner.nextLine().toLowerCase();
             String value = scanner.nextLine();
-            FilterCondition c = new FilterCondition(col, conditions.get(condition), value);
+            Filter c = new Filter(col, conditions.get(condition), value);
             filterConditionList.add(c);
             System.out.println("0-Finish");
             op = scanner.nextInt();
@@ -160,7 +156,7 @@ public class Main {
 
     private static void sort(Grid grid, QueriedRange range) throws Exception {
         System.out.println("Enter the cols:");
-        Map<Integer, SortingCriteria> sortingConditionMap = new HashMap();
+        LinkedHashMap<Integer, SortingCriteria> sortingConditionMap = new LinkedHashMap();
         int op = 1;
         while (op != 0) {
             System.out.println("Sort ASCENDING/DESCENDING");
@@ -172,7 +168,7 @@ public class Main {
             op = scanner.nextInt();
             scanner.nextLine();
         }
-        SortingCondition sortingCondition = new SortingCondition(sortingConditionMap);
+        Sort sortingCondition = new Sort(sortingConditionMap);
         SortAction sortAction = new SortAction(sortingCondition);
         sortAction.execute(grid, range);
 
@@ -199,7 +195,7 @@ public class Main {
         int level = scanner.nextInt();
         scanner.nextLine();
         int op = 1;
-        Map<Integer, List<FilterOnFunctionCondition>> filterOnFunctionsConditionList = new HashMap();
+        Map<Integer, List<FunctionFilter>> filterOnFunctionsConditionList = new HashMap();
         while (op != 0) {
             System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT");
             FunctionName function = FunctionName.valueOf(scanner.next());
@@ -215,7 +211,7 @@ public class Main {
             }
             String condition = scanner.nextLine().toLowerCase();
             String value = scanner.nextLine();
-            FilterOnFunctionCondition filterOnFunctionCondition = new FilterOnFunctionCondition(functionCondition, conditions.get(condition), value);
+            FunctionFilter filterOnFunctionCondition = new FunctionFilter(functionCondition, conditions.get(condition), value);
             filterOnFunctionsConditionList.computeIfAbsent(level, (k) -> new LinkedList()).add(filterOnFunctionCondition);
             System.out.println("0-Finish");
             op = scanner.nextInt();
@@ -230,7 +226,7 @@ public class Main {
         int level = scanner.nextInt();
         scanner.nextLine();
         int op = 1;
-        Map<Integer, List<FunctionSortCondition>> functionConditionMap = new HashMap();
+        Map<Integer, List<FunctionSort>> functionConditionMap = new HashMap();
         while (op != 0) {
             System.out.println("Sort ASCENDING/DESCENDING");
             SortingCriteria ascOrDec = SortingCriteria.valueOf(scanner.next());
@@ -240,7 +236,7 @@ public class Main {
             int col = scanner.nextInt();
             scanner.nextLine();
             FunctionCondition functionCondition = new FunctionCondition(col, function);
-            functionConditionMap.computeIfAbsent(level, (k) -> new LinkedList()).add(new FunctionSortCondition(functionCondition, ascOrDec));
+            functionConditionMap.computeIfAbsent(level, (k) -> new LinkedList()).add(new FunctionSort(functionCondition, ascOrDec));
             System.out.println("0-Finish");
             op = scanner.nextInt();
             scanner.nextLine();

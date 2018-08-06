@@ -22,10 +22,10 @@ public class QueriedRange {
     private QueriedResult queriedResult;
 
     private final List<GroupBy> groupByConditionList;
-    private Collection<FilterCondition> filterCondition;
-    private SortingCondition sortingCondition;
-    private Map<Integer, List<FilterOnFunctionCondition>> FilterOnFunctionConditionList;
-    private Map<Integer, List<FunctionSortCondition>> functionSortCondition;
+    private List<Filter> filterConditionList;
+    private Sort sortingCondition;
+    private Map<Integer, List<FunctionFilter>> filterOnFunctionConditionList;
+    private Map<Integer, List<FunctionSort>> functionSortConditionList;
 
     public QueriedRange(int startRow, int endRow, int startCol, int endCol) {
         this.startRow = startRow;
@@ -33,18 +33,18 @@ public class QueriedRange {
         this.startCol = startCol;
         this.endCol = endCol;
         this.groupByConditionList = new LinkedList();
-        this.filterCondition = new LinkedList();
+        this.filterConditionList = new LinkedList();
         this.queriedResult = null;
         this.sortingCondition = null;
-        this.FilterOnFunctionConditionList = new HashMap();
-        this.functionSortCondition = new HashMap();
+        this.filterOnFunctionConditionList = new HashMap();
+        this.functionSortConditionList = new HashMap();
     }
 
-    public SortingCondition getSortingCondition() {
+    public Sort getSortingCondition() {
         return sortingCondition;
     }
 
-    public void setSortingCondition(SortingCondition sortingCondition) {
+    public void setSortingCondition(Sort sortingCondition) {
         this.sortingCondition = sortingCondition;
     }
 
@@ -74,7 +74,7 @@ public class QueriedRange {
 
     public QueriedResult getQueriedResult() throws QueriedException {
 
-        if (this.queriedResult == null && this.groupByConditionList.isEmpty() && this.filterCondition.isEmpty() && this.sortingCondition == null) {
+        if (this.queriedResult == null && this.groupByConditionList.isEmpty() && this.filterConditionList.isEmpty() && this.sortingCondition == null) {
             List<Integer> temp = new LinkedList();
             for (int i = 0; i <= this.endRow - this.startRow; i++) {
                 temp.add(i);
@@ -89,20 +89,20 @@ public class QueriedRange {
         return queriedResult;
     }
 
-    public Collection<FilterCondition> getFilterConList() {
-        return filterCondition;
+    public Collection<Filter> getFilterConList() {
+        return filterConditionList;
     }
 
-    public void setFilterCondition(Collection<FilterCondition> filterCondition) {
-        this.filterCondition = filterCondition;
+    public void setFilterCondition(List<Filter> filterCondition) {
+        this.filterConditionList = filterCondition;
     }
 
-    public void setFilterOnFunctionConditionMap(Map<Integer, List<FilterOnFunctionCondition>> FilterOnFunctionConditionList) {
-        this.FilterOnFunctionConditionList = FilterOnFunctionConditionList;
+    public void setFilterOnFunctionConditionMap(Map<Integer, List<FunctionFilter>> FilterOnFunctionConditionList) {
+        this.filterOnFunctionConditionList = FilterOnFunctionConditionList;
     }
 
-    public void setFunctionSortCondition(Map<Integer, List<FunctionSortCondition>> functionSortCondition) {
-        this.functionSortCondition = functionSortCondition;
+    public void setFunctionSortCondition(Map<Integer, List<FunctionSort>> functionSortCondition) {
+        this.functionSortConditionList = functionSortCondition;
     }
 
     public void setQueriedResult(QueriedResult queriedResult) {
@@ -119,11 +119,11 @@ public class QueriedRange {
         return count;
     }
 
-    public Map<Integer, List<FilterOnFunctionCondition>> getFilterOnFunctionConditionMap() {
-        return FilterOnFunctionConditionList;
+    public Map<Integer, List<FunctionFilter>> getFilterOnFunctionConditionMap() {
+        return filterOnFunctionConditionList;
     }
 
-    public Map<Integer, List<FunctionSortCondition>> getFunctionSortCondition() {
-        return functionSortCondition;
+    public Map<Integer, List<FunctionSort>> getFunctionSortCondition() {
+        return functionSortConditionList;
     }
 }

@@ -13,15 +13,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import query.model.Filter;
-import query.model.FilterCondition;
-import query.model.FilterOnFunctionCondition;
+import query.model.FunctionFilter;
 import query.model.FunctionCondition;
 import query.model.FunctionName;
-import query.model.FunctionSortCondition;
+import query.model.FunctionSort;
 import query.model.GroupBy;
 import query.model.QueriedRange;
-import query.model.Sorting;
-import query.model.SortingCondition;
+import query.model.Sort;
 
 /**
  *
@@ -39,25 +37,25 @@ public class RefershResult {
             groupByAction.execute(grid, range);
         }
 
-        Collection<FilterCondition> filterConditions = range.getFilterConList();
+        Collection<Filter> filterConditions = range.getFilterConList();
         if (!filterConditions.isEmpty()) {
             FilterAction filterAction = new FilterAction(filterConditions);
             range.setFilterCondition(new LinkedList());
             filterAction.execute(grid, range);
         }
-        SortingCondition sortingCondition = range.getSortingCondition();
+        Sort sortingCondition = range.getSortingCondition();
         if (sortingCondition != null) {
             SortAction sortAction = new SortAction(sortingCondition);
             range.setSortingCondition(null);
             sortAction.execute(grid, range);
         }
-        Map<Integer, List<FilterOnFunctionCondition>> filterOnFunctionConditionMap = range.getFilterOnFunctionConditionMap();
+        Map<Integer, List<FunctionFilter>> filterOnFunctionConditionMap = range.getFilterOnFunctionConditionMap();
         if (!filterOnFunctionConditionMap.isEmpty()) {
             range.setFilterOnFunctionConditionMap(new HashMap());
             FilterOnFunctionsAction filterOnFunctionAction = new FilterOnFunctionsAction(filterOnFunctionConditionMap);
             filterOnFunctionAction.execute(grid, range);
         }
-        Map<Integer, List<FunctionSortCondition>> functionSortConditionMap = range.getFunctionSortCondition();
+        Map<Integer, List<FunctionSort>> functionSortConditionMap = range.getFunctionSortCondition();
         if (!functionSortConditionMap.isEmpty()) {
             range.setFunctionSortCondition(new HashMap());
             FunctionSortAction functionSortAction = new FunctionSortAction(functionSortConditionMap);

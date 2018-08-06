@@ -5,37 +5,32 @@
  */
 package query.model;
 
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author admin
  */
 public class Filter {
 
-    private final Collection<FilterCondition> conList;
+    private final int col;
+    private final Condition condition;
+    private final String value;
 
-    public Filter(Collection<FilterCondition> conList) {
-        this.conList = conList;
+    public Filter(int col, Condition condition, String value) {
+        this.col = col;
+        this.condition = condition;
+        this.value = value;
     }
 
-/*    public void setQueriedResult(QueriedResult queriedResult) {
-        this.queriedResult = queriedResult;
+    public int getCol() {
+        return col;
     }
 
-    public QueriedResult getQueriedResult() {
-        if(queriedResult==null)
-               try {
-                   throw new Exception("This Result is Reseted to null");
-        } catch (Exception ex) {
-            Logger.getLogger(Filter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return queriedResult;
-    }*/
-    public Collection<FilterCondition> getConList() {
-        return conList;
+    public Condition getCondition() {
+        return condition;
+    }
+
+    public String getValue() {
+        return value;
     }
 
 }

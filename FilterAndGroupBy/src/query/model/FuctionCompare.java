@@ -14,15 +14,15 @@ import java.util.List;
  */
 public class FuctionCompare implements Comparator<QueriedResult>{
 
-    private final List<FunctionSortCondition> functionSortConditionList;
+    private final List<FunctionSort> functionSortConditionList;
 
-    public FuctionCompare(List<FunctionSortCondition> functionSortConditionList) {
+    public FuctionCompare(List<FunctionSort> functionSortConditionList) {
         this.functionSortConditionList = functionSortConditionList;
     }
     
     @Override
     public int compare(QueriedResult queriedResult1, QueriedResult queriedResult2) {
-        for(FunctionSortCondition functionSortCondition:this.functionSortConditionList)
+        for(FunctionSort functionSortCondition:this.functionSortConditionList)
         {
             FunctionCondition functionCondition=functionSortCondition.getFunctionCondition();
             double val1=(double)queriedResult1.getFunctionMap().get(functionCondition).getValue();

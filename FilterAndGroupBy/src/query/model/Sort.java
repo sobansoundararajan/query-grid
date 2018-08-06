@@ -5,6 +5,7 @@
  */
 package query.model;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,14 +13,14 @@ import java.util.Map;
  *
  * @author admin
  */
-public class SortingCondition {
+public class Sort {
 
-    private final Map<Integer,SortingCriteria> sortingCondition;
+    private final LinkedHashMap<Integer,SortingCriteria> sortingCondition;
 
-    public SortingCondition(Map<Integer,SortingCriteria> sortingCondition) {
+    public Sort(LinkedHashMap<Integer,SortingCriteria> sortingCondition) {
         this.sortingCondition = sortingCondition;
     }
-    public Map<Integer,SortingCriteria> getSortingCondition() {
+    public LinkedHashMap<Integer,SortingCriteria> getSortingCondition() {
         return sortingCondition;
     }
 

@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import static query.control.FilterAction.conditionMap;
 import query.model.Condition;
-import query.model.FilterOnFunctionCondition;
+import query.model.FunctionFilter;
 import query.model.FunctionCondition;
 import query.model.QueriedRange;
 import query.model.QueriedResult;
@@ -28,9 +28,9 @@ import query.model.QueriedResult;
 public class FilterOnFunctionsAction {
 
     static Map<Condition, BiFunction<Value, String, Boolean>> conditionMap = new EnumMap<Condition, BiFunction<Value, String, Boolean>>(Condition.class);
-    private final Map<Integer, List<FilterOnFunctionCondition>> conditionList;
+    private final Map<Integer, List<FunctionFilter>> conditionList;
 
-    public FilterOnFunctionsAction(Map<Integer, List<FilterOnFunctionCondition>> conditionList) {
+    public FilterOnFunctionsAction(Map<Integer, List<FunctionFilter>> conditionList) {
         this.conditionList = conditionList;
     }
     static {
@@ -45,15 +45,15 @@ public class FilterOnFunctionsAction {
     public void execute(Grid grid, QueriedRange range) throws Exception {
         QueriedResult queriedResult = range.getQueriedResult();
         int level = 0;
-        for (Map.Entry<Integer, List<FilterOnFunctionCondition>> entry : conditionList.entrySet()) {
+        for (Map.Entry<Integer, List<FunctionFilter>> entry : conditionList.entrySet()) {
             level = entry.getKey();
-            List<FilterOnFunctionCondition>filterOnFunctionConditionList=entry.getValue();
+            List<FunctionFilter>filterOnFunctionConditionList=entry.getValue();
             Set<FunctionCondition>functionConditionSet=queriedResult.getFunctionMap().keySet();
             if (level == 0 || level > range.getMaxLevel()) {
                 throw new QueriedException("Operation at this Level :"+level+" can't be perform");
             }
             range.getFilterOnFunctionConditionMap().computeIfAbsent(level, k -> new LinkedList()).addAll(entry.getValue());
-            for (FilterOnFunctionCondition condition : filterOnFunctionConditionList) {
+            for (FunctionFilter condition : filterOnFunctionConditionList) {
                 FunctionCondition functionCondition=condition.getFuctionCondition();
                 if (!functionConditionSet.contains(functionCondition)) 
                     throw new QueriedException("This Function : "+functionCondition+" is not yet performed");
@@ -64,7 +64,7 @@ public class FilterOnFunctionsAction {
         FunctionAction.excute(grid, range);
     }
 
-    private static void FilterOnFunctionAction(Grid grid, QueriedRange range, QueriedResult queriedResult, List<FilterOnFunctionCondition> conditionList, int level) throws Exception {
+    private static void FilterOnFunctionAction(Grid grid, QueriedRange range, QueriedResult queriedResult, List<FunctionFilter> conditionList, int level) throws Exception {
         if (level == 0) {
             return;
         }
@@ -73,7 +73,7 @@ public class FilterOnFunctionsAction {
         for (QueriedResult nextResult : queriedResult.getNextAction()) {
             FilterOnFunctionsAction.FilterOnFunctionAction(grid, range, nextResult, conditionList, level);
             boolean flag = true;
-            for (FilterOnFunctionCondition condition : conditionList) {
+            for (FunctionFilter condition : conditionList) {
                 Value value = nextResult.getFunctionMap().get(condition.getFuctionCondition());
                 if (!conditionMap.get(condition.getCondition()).apply(value, condition.getValue())) {
                     flag = false;
