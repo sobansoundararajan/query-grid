@@ -42,6 +42,7 @@ public class FilterOnRecordsAction {
                 }
             }
             queriedResult.setNextAction(nodesToBeAdded);
+            queriedResult.inValidateColumnFormula();
         } else {
             List<Integer> temp = new LinkedList();
             for (Integer row : queriedResult.getRow()) {
