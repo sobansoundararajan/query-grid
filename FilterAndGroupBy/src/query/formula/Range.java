@@ -7,8 +7,10 @@ package query.formula;
 
 import grid.DataTypes;
 import grid.ErrorValue;
+import grid.NumberValue;
 import grid.StringValue;
 import grid.Value;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,18 +29,18 @@ public class Range extends RangedCriteria {
     }
 
     public Value getValue(List<Value> valueList) {
+        Collections.sort(rangeList);
+        int size=rangeList.size();
         if (valueList.size() == 1) {
             Value value = valueList.get(0);
-            if (!(value.getType().equals(DataTypes.String) || value.getType().equals(DataTypes.Date))) {
+            DataTypes type=value.getType();
+            if (!(type.equals(DataTypes.String) || type.equals(DataTypes.Date))) {
                 double val = (double) value.getValue();
-                for (int i = 0; i < rangeList.size(); i++) {
-                    if (rangeList.get(i) >= val && i == 0) {
-                        return new StringValue(DataTypes.String, "Rang { " + Double.MIN_VALUE + "," + rangeList.get(i) + " }");
-                    } else if (rangeList.get(i) >= val) {
-                        return new StringValue(DataTypes.String, "Rang { " + (rangeList.get(i - 1) + 1) + "," + rangeList.get(i) + " }");
-                    } else if (rangeList.get(i) < val && i == rangeList.size() - 1) {
-                        return new StringValue(DataTypes.String, "Rang { " + rangeList.get(i) + "," + Double.MAX_VALUE + " }");
-                    }
+                for (int i = 0; i < size; i++) {
+                    if (rangeList.get(i) >= val ) 
+                        return new NumberValue(DataTypes.Number,i);
+                    else if(i==size-1)
+                        return new NumberValue(DataTypes.Number,i+1);
                 }
             }
             return new ErrorValue(DataTypes.ERROR, "REF!");

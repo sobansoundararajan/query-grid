@@ -30,13 +30,13 @@ public class Quarterly implements Formula {
                 Date date = new Date((long) (((double) value.getValue()) * 86400000.0));
                 String str;
                 if (date.getMonth() < 3) {
-                    str = "Quarterly1";
+                    str = "Q1";
                 } else if (date.getMonth() < 6) {
-                    str = "Quarterly2";
+                    str = "Q2";
                 } else if (date.getMonth() < 9) {
-                    str = "Quarterly3";
+                    str = "Q3";
                 } else {
-                    str = "Quarterly4";
+                    str = "Q4";
                 }
                 return new StringValue(DataTypes.String, str);
             } else {
