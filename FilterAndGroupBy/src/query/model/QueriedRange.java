@@ -6,7 +6,6 @@
 package query.model;
 
 import query.exception.QueriedException;
-import query.model.GroupBy;
 import java.util.*;
 
 /**
@@ -21,31 +20,25 @@ public class QueriedRange {
     private final int endCol;
     private QueriedResult queriedResult;
 
-    private final List<GroupBy> groupByConditionList;
-    private List<Filter> filterConditionList;
-    private Sort sortingCondition;
-    private Map<Integer, List<FunctionFilter>> filterOnFunctionConditionList;
-    private Map<Integer, List<FunctionSort>> functionSortConditionList;
+    private final List<GroupBy> groupByList;
+    private List<FilterOnRecords> filterOnRecordsList;
+    private SortOnRecords sortOnRecords;
+    private List<ColumnFormula> columnFormulaList;
+    private Map<Integer, List<FilterOnGroups>> filterOnGroupsMap;
+    private Map<Integer, List<SortOnGroups>> sortOnGroupsMap;
 
     public QueriedRange(int startRow, int endRow, int startCol, int endCol) {
         this.startRow = startRow;
         this.endRow = endRow;
         this.startCol = startCol;
         this.endCol = endCol;
-        this.groupByConditionList = new LinkedList();
-        this.filterConditionList = new LinkedList();
+        this.groupByList = new LinkedList();
+        this.filterOnRecordsList = new LinkedList();
         this.queriedResult = null;
-        this.sortingCondition = null;
-        this.filterOnFunctionConditionList = new HashMap();
-        this.functionSortConditionList = new HashMap();
-    }
-
-    public Sort getSortingCondition() {
-        return sortingCondition;
-    }
-
-    public void setSortingCondition(Sort sortingCondition) {
-        this.sortingCondition = sortingCondition;
+        this.sortOnRecords = null;
+        this.columnFormulaList = new LinkedList();
+        this.filterOnGroupsMap = new HashMap();
+        this.sortOnGroupsMap = new HashMap();
     }
 
     public int getStartRow() {
@@ -64,17 +57,17 @@ public class QueriedRange {
         return endCol;
     }
 
-    public void addResult(GroupBy obj) {
-        groupByConditionList.add(obj);
+    public void addGroupByList(GroupBy groupBy) {
+        groupByList.add(groupBy);
     }
 
-    public List<GroupBy> getGroupByConditionList() {
-        return groupByConditionList;
+    public List<GroupBy> getGroupByList() {
+        return groupByList;
     }
 
     public QueriedResult getQueriedResult() throws QueriedException {
 
-        if (this.queriedResult == null && this.groupByConditionList.isEmpty() && this.filterConditionList.isEmpty() && this.sortingCondition == null) {
+        if (this.queriedResult == null && this.groupByList.isEmpty() && this.filterOnRecordsList.isEmpty() && this.sortOnRecords == null && this.columnFormulaList.isEmpty()) {
             List<Integer> temp = new LinkedList();
             for (int i = 0; i <= this.endRow - this.startRow; i++) {
                 temp.add(i);
@@ -89,20 +82,36 @@ public class QueriedRange {
         return queriedResult;
     }
 
-    public Collection<Filter> getFilterConList() {
-        return filterConditionList;
+    public Collection<FilterOnRecords> getFilterOnRecordsList() {
+        return filterOnRecordsList;
     }
 
-    public void setFilterCondition(List<Filter> filterCondition) {
-        this.filterConditionList = filterCondition;
+    public void setFilterOnRecordsList(List<FilterOnRecords> filterOnRecordsList) {
+        this.filterOnRecordsList = filterOnRecordsList;
     }
 
-    public void setFilterOnFunctionConditionMap(Map<Integer, List<FunctionFilter>> FilterOnFunctionConditionList) {
-        this.filterOnFunctionConditionList = FilterOnFunctionConditionList;
+    public List<ColumnFormula> getColumnFormulaList() {
+        return columnFormulaList;
     }
 
-    public void setFunctionSortCondition(Map<Integer, List<FunctionSort>> functionSortCondition) {
-        this.functionSortConditionList = functionSortCondition;
+    public void setColumnFormulaList(List<ColumnFormula> columnFormulaList) {
+        this.columnFormulaList = columnFormulaList;
+    }
+
+    public SortOnRecords getSortOnRecords() {
+        return sortOnRecords;
+    }
+
+    public void setSortOnRecords(SortOnRecords sortOnRecords) {
+        this.sortOnRecords = sortOnRecords;
+    }
+
+    public void setFilterOnGroupsMap(Map<Integer, List<FilterOnGroups>> filterOnGroupsMap) {
+        this.filterOnGroupsMap = filterOnGroupsMap;
+    }
+
+    public void setSortOnGroupsMap(Map<Integer, List<SortOnGroups>> sortOnGroupsMap) {
+        this.sortOnGroupsMap = sortOnGroupsMap;
     }
 
     public void setQueriedResult(QueriedResult queriedResult) {
@@ -119,11 +128,11 @@ public class QueriedRange {
         return count;
     }
 
-    public Map<Integer, List<FunctionFilter>> getFilterOnFunctionConditionMap() {
-        return filterOnFunctionConditionList;
+    public Map<Integer, List<FilterOnGroups>> getFilterOnGroupsMap() {
+        return filterOnGroupsMap;
     }
 
-    public Map<Integer, List<FunctionSort>> getFunctionSortCondition() {
-        return functionSortConditionList;
+    public Map<Integer, List<SortOnGroups>> getSortOnGroupsMap() {
+        return sortOnGroupsMap;
     }
 }

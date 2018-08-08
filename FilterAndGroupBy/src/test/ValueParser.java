@@ -77,18 +77,19 @@ public class ValueParser {
                 }
                 format = format.substring(0, format.length() - 1);
                 if (dateMap.get(DateFormat.m) > 0 && dateMap.get(DateFormat.m) <= 12 && (dateMap.get(DateFormat.d) <= days[dateMap.get(DateFormat.m)] || ((dateMap.get(DateFormat.y) % 4 == 0) && dateMap.get(DateFormat.m) == 2) && dateMap.get(DateFormat.d) == 29)) {
-                    if(input.contains("-")){
+                    if (input.contains("-")) {
                         input = input.replace('-', '/');
-                    }else if(input.contains(".")){
+                    } else if (input.contains(".")) {
                         input = input.replace('.', '/');
-                    }else if(input.contains(","))
+                    } else if (input.contains(",")) {
                         input = input.replace(',', '/');
+                    }
 
                     Date date = new SimpleDateFormat(format).parse(input);
 
                     num = date.getTime() / 86400000.0;
                     value = new DateValue(DataTypes.Date, num);
-                }else{
+                } else {
                     value = new StringValue(DataTypes.String, input);
                 }
             } else {

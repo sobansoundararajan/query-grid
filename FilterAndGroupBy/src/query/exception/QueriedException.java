@@ -14,5 +14,5 @@ public class QueriedException extends Exception {
     public QueriedException(String string) {
         super(string);
     }
-    
+
 }

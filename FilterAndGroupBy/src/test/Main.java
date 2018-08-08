@@ -1,21 +1,30 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
+ * To change this license header, choose License Headers in Project Proptionerties.
  * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * and optionen the template in the editor.
  */
 package test;
 
-import grid.DataTypes;
+import query.formula.Normal;
+import query.formula.Formula;
+import query.formula.Range;
+import query.formula.WeekDays;
+import query.formula.Quarterly;
 import query.control.*;
 import query.model.*;
 import grid.DateFormat;
 import grid.Grid;
 import query.exception.QueriedException;
-import grid.StringValue;
 import grid.Value;
 import java.io.*;
 import java.text.ParseException;
 import java.util.*;
+import query.formula.Average;
+import query.formula.Count;
+import query.formula.Maximum;
+import query.formula.Minimum;
+import query.formula.Sum;
+import query.formula.Year;
 
 /**
  *
@@ -26,28 +35,38 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    private static LinkedList<DateFormat> dfList = new LinkedList();
+    private static LinkedList<DateFormat> dateFormat = new LinkedList();
     private static Scanner scanner = new Scanner(System.in);
-    private static Map<String, Condition> conditions = new LinkedHashMap();
+    private static Map<String, ConditionOperator> conditions = new LinkedHashMap();
+    private static Map<String, Formula> formulaMap = new LinkedHashMap();
 
     static {
-        conditions.put("equals", Condition.EQUALS);
-        conditions.put("does not equals", Condition.DOESNOTEQUALS);
-        conditions.put("greater than", Condition.GREATERTHAN);
-        conditions.put("greater than or equal to", Condition.GREATERTHANOREQUALTO);
-        conditions.put("less than", Condition.LESSTHAN);
-        conditions.put("less than or equal to", Condition.LESSTHANOREQUALTO);
-        conditions.put("begines with", Condition.BEGINESWITH);
-        conditions.put("does not begines with", Condition.DOESNOTBEGINWITH);
-        conditions.put("ends with", Condition.ENDSWITH);
-        conditions.put("does not ends with", Condition.DOESNOTENDSWITH);
-        conditions.put("contains", Condition.CONTAINS);
-        conditions.put("does not contains", Condition.DOESNOTCONTAINS);
-        conditions.put("matches", Condition.MATCHES);
-        conditions.put("does not matches", Condition.DOESNOTMATCHES);
+        conditions.put("equals", ConditionOperator.EQUALS);
+        conditions.put("does not equals", ConditionOperator.DOESNOTEQUALS);
+        conditions.put("greater than", ConditionOperator.GREATERTHAN);
+        conditions.put("greater than or equal to", ConditionOperator.GREATERTHANOREQUALTO);
+        conditions.put("less than", ConditionOperator.LESSTHAN);
+        conditions.put("less than or equal to", ConditionOperator.LESSTHANOREQUALTO);
+        conditions.put("begines with", ConditionOperator.BEGINESWITH);
+        conditions.put("does not begines with", ConditionOperator.DOESNOTBEGINWITH);
+        conditions.put("ends with", ConditionOperator.ENDSWITH);
+        conditions.put("does not ends with", ConditionOperator.DOESNOTENDSWITH);
+        conditions.put("contains", ConditionOperator.CONTAINS);
+        conditions.put("does not contains", ConditionOperator.DOESNOTCONTAINS);
+        conditions.put("matches", ConditionOperator.MATCHES);
+        conditions.put("does not matches", ConditionOperator.DOESNOTMATCHES);
+        formulaMap.put("SUM", new Sum());
+        formulaMap.put("AVERAGE", new Average());
+        formulaMap.put("COUNT", new Count());
+        formulaMap.put("Maximum", new Maximum());
+        formulaMap.put("Minimum", new Minimum());
+        formulaMap.put("NORMAL", new Normal());
+        formulaMap.put("QUARTERLY", new Quarterly());
+        formulaMap.put("WEKDAYS", new WeekDays());
+        formulaMap.put("YEAR", new Year());
     }
 
-    private static void print(QueriedResult queriedResult) {
+    private static void print(Grid grid,QueriedRange range,QueriedResult queriedResult) {
         if (queriedResult.getNextAction().isEmpty()) {
             if (queriedResult.getValue() != null) {
                 for (Value value : queriedResult.getValue()) {
@@ -56,11 +75,10 @@ public class Main {
                 }
             }
             System.out.println(queriedResult.getRow());
-            Map<FunctionCondition, Value> functionMap = queriedResult.getFunctionMap();
-            if (!functionMap.isEmpty()) {
-                for (Map.Entry<FunctionCondition, Value> entry : functionMap.entrySet()) {
-                    System.out.println(entry.getKey().getFunction() + " " + entry.getKey().getCol() + " " + entry.getValue().getValue());
-                }
+            for(ColumnFormula columnFormula:range.getColumnFormulaList())
+            {
+                Value value=queriedResult.evaluateFormula(grid, range, columnFormula);
+                System.out.println(columnFormula.getFormula().toString()+" "+value.getValue());
             }
         } else {
             if (queriedResult.getValue() != null) {
@@ -69,22 +87,21 @@ public class Main {
                     System.out.print(value.getValue() + " ");
                 }
             }
-            Map<FunctionCondition, Value> functionMap = queriedResult.getFunctionMap();
-            if (!functionMap.isEmpty()) {
-                for (Map.Entry<FunctionCondition, Value> entry : functionMap.entrySet()) {
-                    System.out.println(entry.getKey().getFunction() + " " + entry.getKey().getCol() + " " + entry.getValue().getValue());
-                }
+            for(ColumnFormula columnFormula:range.getColumnFormulaList())
+            {
+                Value value=queriedResult.evaluateFormula(grid, range, columnFormula);
+                System.out.println(columnFormula.getFormula().toString()+" "+value.getValue());
             }
-            for (QueriedResult vn : queriedResult.getNextAction()) {
-                Main.print(vn);
+            for (QueriedResult chiledNode : queriedResult.getNextAction()) {
+                Main.print(grid,range,chiledNode);
             }
         }
     }
 
     private static void filter(Grid grid, QueriedRange range) throws Exception {
-        Collection<Filter> filterConditionList = new ArrayList();
-        int op = 1;
-        while (op != 0) {
+        Collection<FilterOnRecords> filterConditionList = new ArrayList();
+        int option = 1;
+        while (option != 0) {
             System.out.println("Enter the col Number");
             int col = scanner.nextInt();
             scanner.nextLine();
@@ -93,61 +110,41 @@ public class Main {
             }
             String condition = scanner.nextLine().toLowerCase();
             String value = scanner.nextLine();
-            Filter c = new Filter(col, conditions.get(condition), value);
-            filterConditionList.add(c);
+            FilterOnRecords filterOnRecords = new FilterOnRecords(col, conditions.get(condition), value);
+            filterConditionList.add(filterOnRecords);
             System.out.println("0-Finish");
-            op = scanner.nextInt();
+            option = scanner.nextInt();
             scanner.nextLine();
         }
-        FilterAction filterAction = new FilterAction(filterConditionList);
+        FilterOnRecordsAction filterAction = new FilterOnRecordsAction(filterConditionList);
         filterAction.execute(grid, range);
     }
 
     private static void groupBy(Grid grid, QueriedRange range) throws Exception {
-        List<GroupByCondition> groupByConditionList = new LinkedList();
-        int op = 1;
-        while (op != 0) {
-            GroupByCriteria groupByCriteria = null;
+        List<ColumnFormula> groupByConditionList = new LinkedList();
+        int option = 1;
+        while (option != 0) {
+            Formula formula;
             System.out.println("Enter col:");
             int col = scanner.nextInt();
             scanner.nextLine();
-            System.out.println("Select \nNORMAL\nMONTH\nWEEKDAYS\nYEAR\nQUTERLY\nRANGE");
-            String criteria = scanner.nextLine();
-            switch (criteria) {
-                case "NORMAL": {
-                    groupByCriteria = new Normal();
-                    break;
+            System.out.println("Select \nNORMAL\nMONTH\nWEEKDAYS\nYEAR\nQUARTERLY\nRANGE");
+            String function = scanner.nextLine();
+            if (function.equalsIgnoreCase("Range")) {
+                List<Double> rangeList = new ArrayList();
+                System.out.print("Enter The Ranges : ");
+                String str = scanner.nextLine();
+                String[] strArr = str.split(" ");
+                for (int i = 0; i < strArr.length; i++) {
+                    rangeList.add(Double.valueOf(strArr[i]));
                 }
-                case "MONTH": {
-                    groupByCriteria = new Month();
-                    break;
-                }
-                case "WEEKDAYS": {
-                    groupByCriteria = new WeekDays();
-                    break;
-                }
-                case "QUTERLY": {
-                    groupByCriteria = new Quterly();
-                    break;
-                }
-                case "RANGE": {
-                    List<Double> rangeList = new ArrayList();
-                    System.out.print("Enter The Ranges : ");
-                    String str = scanner.nextLine();
-                    String[] strArr = str.split(" ");
-                    for (int i = 0; i < strArr.length; i++) {
-                        rangeList.add(Double.valueOf(strArr[i]));
-                    }
-                    groupByCriteria = new Range(rangeList);
-                    break;
-                }
+                formula = new Range(rangeList);
+            } else {
+                formula = formulaMap.get(function);
             }
-            if (groupByCriteria == null) {
-                throw new QueriedException("GroupBy Criteria Not Set");
-            }
-            groupByConditionList.add(new GroupByCondition(groupByCriteria, col));
+            groupByConditionList.add(new ColumnFormula(col, formula));
             System.out.println("0-Finish");
-            op = scanner.nextInt();
+            option = scanner.nextInt();
             scanner.nextLine();
         }
         GroupByAction groupByAction = new GroupByAction(groupByConditionList);
@@ -157,52 +154,67 @@ public class Main {
     private static void sort(Grid grid, QueriedRange range) throws Exception {
         System.out.println("Enter the cols:");
         LinkedHashMap<Integer, SortingCriteria> sortingConditionMap = new LinkedHashMap();
-        int op = 1;
-        while (op != 0) {
+        int option = 1;
+        while (option != 0) {
             System.out.println("Sort ASCENDING/DESCENDING");
             SortingCriteria ascOrDec = SortingCriteria.valueOf(scanner.next());
             int col = scanner.nextInt();
             scanner.nextLine();
             sortingConditionMap.put(col, ascOrDec);
             System.out.println("0-finish");
-            op = scanner.nextInt();
+            option = scanner.nextInt();
             scanner.nextLine();
         }
-        Sort sortingCondition = new Sort(sortingConditionMap);
-        SortAction sortAction = new SortAction(sortingCondition);
+        SortOnRecords sortingCondition = new SortOnRecords(sortingConditionMap);
+        SortOnRecordsAction sortAction = new SortOnRecordsAction(sortingCondition);
         sortAction.execute(grid, range);
 
     }
 
-    private static void function(Grid grid, QueriedRange range) throws Exception {
-        int op = 1;
-        while (op != 0) {
-            System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT");
-            FunctionName function = FunctionName.valueOf(scanner.next());
+    private static void function(QueriedRange range) throws Exception {
+        int option = 1;
+        List<ColumnFormula> conditionOnGroupList = new LinkedList();
+        while (option != 0) {
+            System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT\nNORMAL\nMONTH\nWEEKDAYS\nYEAR\nQUARTERLY\nRANGE");
+            String function = scanner.next();
+            Formula formula;
             System.out.println("Enter col");
             int col = scanner.nextInt();
-            FunctionCondition functionCondition = new FunctionCondition(col, function);
-            range.getQueriedResult().getFunctionMap().put(functionCondition, new StringValue(DataTypes.String, ""));
+            scanner.nextLine();
+            if (function.equalsIgnoreCase("Range")) {
+                List<Double> rangeList = new ArrayList();
+                System.out.print("Enter The Ranges : ");
+                String str = scanner.nextLine();
+                String[] strArr = str.split(" ");
+                for (int i = 0; i < strArr.length; i++) {
+                    rangeList.add(Double.valueOf(strArr[i]));
+                }
+                formula = new Range(rangeList);
+            } else {
+                formula = formulaMap.get(function);
+            }
+            ColumnFormula functionCondition = new ColumnFormula(col, formula);
+            conditionOnGroupList.add(functionCondition);
             System.out.println("0-Finish");
-            op = scanner.nextInt();
+            option = scanner.nextInt();
             scanner.nextLine();
         }
-        FunctionAction.excute(grid, range);
+        range.getColumnFormulaList().addAll(conditionOnGroupList);
     }
 
     private static void filterOnFunctions(Grid grid, QueriedRange range) throws Exception {
         System.out.println("Maximum Level is :" + range.getMaxLevel() + "\nEnter the Level :");
         int level = scanner.nextInt();
         scanner.nextLine();
-        int op = 1;
-        Map<Integer, List<FunctionFilter>> filterOnFunctionsConditionList = new HashMap();
-        while (op != 0) {
+        int option = 1;
+        Map<Integer, List<FilterOnGroups>> filterOnFunctionsConditionList = new HashMap();
+        while (option != 0) {
             System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT");
-            FunctionName function = FunctionName.valueOf(scanner.next());
+            String function = scanner.next();
             System.out.println("Enter col");
             int col = scanner.nextInt();
             scanner.nextLine();
-            FunctionCondition functionCondition = new FunctionCondition(col, function);
+            ColumnFormula functionCondition = new ColumnFormula(col, formulaMap.get(function));
             for (String str : conditions.keySet()) {
                 System.out.println(str);
                 if (str.equals("less than or equal to")) {
@@ -211,38 +223,38 @@ public class Main {
             }
             String condition = scanner.nextLine().toLowerCase();
             String value = scanner.nextLine();
-            FunctionFilter filterOnFunctionCondition = new FunctionFilter(functionCondition, conditions.get(condition), value);
+            FilterOnGroups filterOnFunctionCondition = new FilterOnGroups(functionCondition, conditions.get(condition), value);
             filterOnFunctionsConditionList.computeIfAbsent(level, (k) -> new LinkedList()).add(filterOnFunctionCondition);
             System.out.println("0-Finish");
-            op = scanner.nextInt();
+            option = scanner.nextInt();
             scanner.nextLine();
-            FunctionFilterAction filterOnFunctionsAction = new FunctionFilterAction(filterOnFunctionsConditionList);
+            FilterOnGroupsAction filterOnFunctionsAction = new FilterOnGroupsAction(filterOnFunctionsConditionList);
             filterOnFunctionsAction.execute(grid, range);
         }
     }
 
-    private static void sortOnFunctions(QueriedRange range) throws QueriedException {
+    private static void sortOnFunctions(Grid grid,QueriedRange range) throws QueriedException {
         System.out.println("Maximum Level is :" + range.getMaxLevel() + "\nEnter the Level :");
         int level = scanner.nextInt();
         scanner.nextLine();
-        int op = 1;
-        Map<Integer, List<FunctionSort>> functionConditionMap = new HashMap();
-        while (op != 0) {
+        int option = 1;
+        Map<Integer, List<SortOnGroups>> functionConditionMap = new HashMap();
+        while (option != 0) {
             System.out.println("Sort ASCENDING/DESCENDING");
             SortingCriteria ascOrDec = SortingCriteria.valueOf(scanner.next());
             System.out.println("Select Functions\nSUM\nAVERAGE\nMAXIMUM\nMINIMUM\nCOUNT");
-            FunctionName function = FunctionName.valueOf(scanner.next());
+            String function = scanner.next();
             System.out.println("Enter col");
             int col = scanner.nextInt();
             scanner.nextLine();
-            FunctionCondition functionCondition = new FunctionCondition(col, function);
-            functionConditionMap.computeIfAbsent(level, (k) -> new LinkedList()).add(new FunctionSort(functionCondition, ascOrDec));
+            ColumnFormula functionCondition = new ColumnFormula(col, formulaMap.get(function));
+            functionConditionMap.computeIfAbsent(level, (k) -> new LinkedList()).add(new SortOnGroups(functionCondition, ascOrDec));
             System.out.println("0-Finish");
-            op = scanner.nextInt();
+            option = scanner.nextInt();
             scanner.nextLine();
         }
-        FunctionSortAction functionSortAction = new FunctionSortAction(functionConditionMap);
-        functionSortAction.execute(range);
+        SortOnGroupsAction functionSortAction = new SortOnGroupsAction(functionConditionMap);
+        functionSortAction.execute(grid,range);
     }
 
     private static void reEvaluate(Grid grid, QueriedRange range) throws Exception {
@@ -256,10 +268,10 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, Exception {
         // TODO code application logic here
-        BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\admin\\Desktop\\CSVinputs2.csv"));
-        dfList.add(DateFormat.d);
-        dfList.add(DateFormat.m);
-        dfList.add(DateFormat.y);
+        BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\admin\\Desktoption\\CSVinputs2.csv"));
+        dateFormat.add(DateFormat.d);
+        dateFormat.add(DateFormat.m);
+        dateFormat.add(DateFormat.y);
         String line;
         Grid grid = new Grid();
         int row = 0;
@@ -268,7 +280,7 @@ public class Main {
             line = line.substring(1, line.length() - 1);
             String[] in = line.split("\",\"");
             for (int i = 0; i < in.length; i++) {
-                v = ValueParser.TypeandValue(in[i], dfList);
+                v = ValueParser.TypeandValue(in[i], dateFormat);
                 grid.set(row, i, v);
             }
 
@@ -282,32 +294,32 @@ public class Main {
         startCol = scanner.nextInt();
         endCol = scanner.nextInt();
         QueriedRange range = new QueriedRange(startRow, endRow, startCol, endCol);
-        Main.print(range.getQueriedResult());
-        int op = 4;
-        while (op != 0) {
+        Main.print(grid,range,range.getQueriedResult());
+        int option = 4;
+        while (option != 0) {
             System.out.println("1-Filter\n2-GroupBy\n3-Sort\n4-Function\n5-Filter On Functions\n6-Sort on Functions\n7-ReEvaluate\n8-Reset(to NULL)\n0-Exit");
-            op = scanner.nextInt();
+            option = scanner.nextInt();
             scanner.nextLine();
-            if (op == 0) {
+            if (option == 0) {
                 break;
-            } else if (op == 1) {
+            } else if (option == 1) {
                 Main.filter(grid, range);
-            } else if (op == 2) {
+            } else if (option == 2) {
                 Main.groupBy(grid, range);
-            } else if (op == 3) {
+            } else if (option == 3) {
                 Main.sort(grid, range);
-            } else if (op == 4) {
-                Main.function(grid, range);
-            } else if (op == 5) {
+            } else if (option == 4) {
+                Main.function(range);
+            } else if (option == 5) {
                 Main.filterOnFunctions(grid, range);
-            } else if (op == 6) {
-                Main.sortOnFunctions(range);
-            } else if (op == 7) {
+            } else if (option == 6) {
+                Main.sortOnFunctions(grid,range);
+            } else if (option == 7) {
                 Main.reEvaluate(grid, range);
-            } else if (op == 8) {
+            } else if (option == 8) {
                 Main.reset(range);
             }
-            Main.print(range.getQueriedResult());
+            Main.print(grid,range,range.getQueriedResult());
         }
 
     }

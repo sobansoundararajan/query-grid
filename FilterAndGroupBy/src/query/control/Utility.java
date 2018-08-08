@@ -14,35 +14,35 @@ import grid.DataTypes;
  */
 public class Utility {
 
-    public static boolean equals(Value v, String condition) {
-        if (!v.getType().equals(DataTypes.String)) {
+    public static boolean equals(Value value, String condition) {
+        if (!value.getType().equals(DataTypes.String)) {
             double val = Double.valueOf(condition);
-            if (val == (double) v.getValue()) {
+            if (val == (double) value.getValue()) {
                 return true;
             }
-        } else if (v.getValue().equals(condition)) {
+        } else if (value.getValue().equals(condition)) {
             return true;
         }
         return false;
     }
 
-    public static boolean greaterThan(Value v, String condition) {
-        if (!v.getType().equals(DataTypes.String) && (double) v.getValue() > Double.valueOf(condition)) {
+    public static boolean greaterThan(Value value, String condition) {
+        if (!value.getType().equals(DataTypes.String) && (double) value.getValue() > Double.valueOf(condition)) {
             return true;
         }
         return false;
     }
 
-    public static boolean lessThan(Value v, String condition) {
-        if (!v.getType().equals(DataTypes.String) && (double) v.getValue() < Double.valueOf(condition)) {
+    public static boolean lessThan(Value value, String condition) {
+        if (!value.getType().equals(DataTypes.String) && (double) value.getValue() < Double.valueOf(condition)) {
             return true;
         }
         return false;
     }
 
-    public static boolean beginsWith(Value v, String condition) {
-        if (v.getType().equals(DataTypes.String)) {
-            String temp = v.getValue().toString();
+    public static boolean beginsWith(Value value, String condition) {
+        if (value.getType().equals(DataTypes.String)) {
+            String temp = value.getValue().toString();
             if (temp.startsWith(condition)) {
                 return true;
             }
@@ -63,9 +63,9 @@ public class Utility {
         return false;
     }
 
-    public static boolean endsWith(Value v, String condition) {
-        if (v.getType().equals(DataTypes.String)) {
-            String temp = v.getValue().toString();
+    public static boolean endsWith(Value value, String condition) {
+        if (value.getType().equals(DataTypes.String)) {
+            String temp = value.getValue().toString();
             if (temp.endsWith(condition)) {
                 return true;
             }

@@ -10,6 +10,5 @@ package query.model;
  * @author admin
  */
 public enum SortingCriteria {
-    ASCENDING,DESCENDING
-    
+    ASCENDING,DESCENDING   
 }

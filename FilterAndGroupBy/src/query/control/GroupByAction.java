@@ -5,59 +5,59 @@
  */
 package query.control;
 
-import grid.DataTypes;
+import query.formula.Formula;
 import grid.Grid;
 import grid.Value;
 import java.text.ParseException;
 import query.model.*;
 import java.util.*;
+import query.exception.QueriedException;
 
 /**
  *
  * @author admin
  */
 public class GroupByAction {
-     private final List<GroupByCondition>groupByConditionList;
 
-    public GroupByAction(List<GroupByCondition> groupByConditionList) {
-        this.groupByConditionList = groupByConditionList;
+    private final List<ColumnFormula> columnFormulaList;
+
+    public GroupByAction(List<ColumnFormula> columnFormulaList) {
+        this.columnFormulaList = columnFormulaList;
     }
-     
 
     public void execute(Grid grid, QueriedRange range) throws Exception {
 
-        GroupBy groupBy = new GroupBy(groupByConditionList);
-        QueriedResult orginalResult = range.getQueriedResult();
-        GroupByAction.groupByAction(grid, range, orginalResult, groupByConditionList);
-        range.setQueriedResult(orginalResult);
-        range.addResult(groupBy);
-        if (!range.getQueriedResult().getFunctionMap().isEmpty()) {
-            FunctionAction.excute(grid, range);
-        }
-        
+        GroupBy groupBy = new GroupBy(columnFormulaList);
+        QueriedResult queriedResult = range.getQueriedResult();
+        groupByAction(grid, range, queriedResult, columnFormulaList);
+        range.setQueriedResult(queriedResult);
+        range.addGroupByList(groupBy);
     }
 
-    private static void groupByAction(Grid grid, QueriedRange range, QueriedResult orginalResult, List<GroupByCondition>groupByConditionList) throws ParseException {
-        if (orginalResult.getNextAction().isEmpty()) {
+    private void groupByAction(Grid grid, QueriedRange range, QueriedResult queriedResult, List<ColumnFormula> columnFormulaList) throws ParseException, QueriedException {
+        if (queriedResult.getNextAction().isEmpty()) {
             HashMap<List<Value>, List<Integer>> tempMap = new HashMap();
-            for (Integer row : orginalResult.getRow()) {
+            for (Integer row : queriedResult.getRow()) {
                 List<Value> groupKey = new LinkedList();
-                for (GroupByCondition groupByCondition: groupByConditionList) {
-                    Value value = grid.get(row + range.getStartRow(), groupByCondition.getCol() + range.getStartCol());  
-                    GroupByCriteria groupByCriteria=groupByCondition.getGroupByCriteria();
-                    groupKey.add(groupByCriteria.getKey(value));
+                for (ColumnFormula condition : columnFormulaList) {
+                    Value value = grid.get(row + range.getStartRow(), condition.getCol() + range.getStartCol());
+                    Formula formula = condition.getFormula();
+                    List<Value> valueList = new LinkedList();
+                    valueList.add(value);
+                    groupKey.add(formula.getValue(valueList));
                 }
                 tempMap.computeIfAbsent(groupKey, k -> new LinkedList()).add(row);
             }
-            orginalResult.setRow(new LinkedList());
-            for (Map.Entry<List<Value>, List<Integer>> entry : tempMap.entrySet()){ 
-                orginalResult.addNextAction(new QueriedResult(entry.getValue(), entry.getKey()));
-                
+            queriedResult.setRow(new LinkedList());
+            queriedResult.setFunctionMap(new HashMap());
+            for (Map.Entry<List<Value>, List<Integer>> entry : tempMap.entrySet()) {
+                queriedResult.addNextAction(new QueriedResult(entry.getValue(), entry.getKey()));
+
             }
         } else {
 
-            for (QueriedResult vn : orginalResult.getNextAction()) {
-                GroupByAction.groupByAction(grid, range, vn, groupByConditionList);
+            for (QueriedResult vn : queriedResult.getNextAction()) {
+                groupByAction(grid, range, vn, columnFormulaList);
             }
         }
     }

@@ -5,9 +5,10 @@
  */
 package query.model;
 
+import grid.Grid;
 import grid.Value;
 import java.util.*;
-import java.util.function.BiFunction;
+import query.formula.Formula;
 
 /**
  *
@@ -15,29 +16,28 @@ import java.util.function.BiFunction;
  */
 public class QueriedResult {
 
-    private List<Integer> row;
+    private List<Integer> rowList;
     private final List<Value> value;
     private List<QueriedResult> nextAction;
-    private Map<FunctionCondition,Value>functionMap;
-    
+    private Map<ColumnFormula, Value> functionMap;
+
     public QueriedResult(List<Integer> row, List<Value> value) {
-        this.row = row;
+        this.rowList = row;
         this.value = value;
         this.nextAction = new LinkedList();
-        this.functionMap= new HashMap ();
+        this.functionMap = new HashMap();
     }
 
-    public void setFunctionMap(Map<FunctionCondition, Value> functionMap) {
+    public void setFunctionMap(Map<ColumnFormula, Value> functionMap) {
         this.functionMap = functionMap;
     }
 
     public void setRow(List<Integer> row) {
-        this.row = row;
+        this.rowList = row;
     }
 
-
     public List<Integer> getRow() {
-        return row;
+        return rowList;
     }
 
     public List<Value> getValue() {
@@ -56,7 +56,33 @@ public class QueriedResult {
         this.nextAction = nextAction;
     }
 
-    public Map<FunctionCondition, Value> getFunctionMap() {
+    public Map<ColumnFormula, Value> getFunctionMap() {
         return functionMap;
-    }    
+    }
+
+    public Value evaluateFormula(Grid grid, QueriedRange range, ColumnFormula columnFormula) {
+        Value value = null;
+        if (columnFormula == null) {
+            for (Map.Entry<ColumnFormula, Value> entry : this.functionMap.entrySet()) {
+                List<Value> valueList = new LinkedList();
+                ColumnFormula formula = entry.getKey();
+                int col = formula.getCol();
+                for (int row : this.rowList) {
+                    valueList.add(grid.get(row, col));
+                }
+                value = formula.getFormula().getValue(valueList);
+                entry.setValue(value);
+            }
+        } else {
+            List<Value> valueList = new LinkedList();
+            int col = columnFormula.getCol();
+            for (int row : this.rowList) {
+                valueList.add(grid.get(row+range.getStartRow(), col));
+            }
+            value = columnFormula.getFormula().getValue(valueList);
+            this.functionMap.put(columnFormula, value);
+        }
+//        System.out.println(this.value.get(0).getValue()+" "+value.getValue()+" "+value.getType());
+        return value;
+    }
 }

@@ -6,9 +6,6 @@
 package query.model;
 
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -16,14 +13,14 @@ import java.util.logging.Logger;
  */
 public class GroupBy {
 
-    private final List<GroupByCondition>groupByConditionList;
+    private final List<ColumnFormula> columnFormulaList;
 
-    public GroupBy(List<GroupByCondition>groupByConditionList) {
-        this.groupByConditionList = groupByConditionList;
+    public GroupBy(List<ColumnFormula> columnFormulaList) {
+        this.columnFormulaList = columnFormulaList;
     }
-    
-    public List<GroupByCondition> getGroupByConditionList() {
-        return groupByConditionList;
+
+    public List<ColumnFormula> getcolumnFormulaList() {
+        return columnFormulaList;
     }
 
 }
