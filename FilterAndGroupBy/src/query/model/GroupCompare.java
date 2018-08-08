@@ -29,8 +29,8 @@ public class GroupCompare implements Comparator<QueriedResult> {
     public int compare(QueriedResult queriedResult1, QueriedResult queriedResult2) {
         for (SortOnGroups functionSortCondition : this.sortOnGroupsList) {
             ColumnFormula functionCondition = functionSortCondition.getColumnFormula();
-            double val1 = (double) queriedResult1.evaluatedFormula(grid, range.getStartRow(), functionCondition).getValue();
-            double val2 = (double) queriedResult2.evaluatedFormula(grid, range.getStartRow(), functionCondition).getValue();
+            double val1 = (double) queriedResult1.evaluatedFormula(grid, range.getStartRow(), range.getStartCol(), functionCondition).getValue();
+            double val2 = (double) queriedResult2.evaluatedFormula(grid, range.getStartRow(), range.getStartCol(),functionCondition).getValue();
             if (val1 != val2) {
                 if (functionSortCondition.getSortingCriteria().equals(SortingCriteria.ASCENDING)) {
                     return (int) (val1 - val2);

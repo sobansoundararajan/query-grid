@@ -60,7 +60,7 @@ public class QueriedResult {
         return functionMap;
     }
 
-    public Value evaluatedFormula(Grid grid, int startRow, ColumnFormula columnFormula) {
+    public Value evaluatedFormula(Grid grid, int startRow, int startCol, ColumnFormula columnFormula) {
         Value value = this.functionMap.get(columnFormula);
         if (value != null) {
             return value;
@@ -68,7 +68,7 @@ public class QueriedResult {
             List<Value> valueList = new LinkedList();
             int col = columnFormula.getCol();
             for (int row : this.rowList) {
-                valueList.add(grid.get(row + startRow, col));
+                valueList.add(grid.get(row + startRow, col + startCol));
             }
             value = columnFormula.getFormula().getValue(valueList);
             this.functionMap.put(columnFormula, value);
