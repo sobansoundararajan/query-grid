@@ -60,29 +60,23 @@ public class QueriedResult {
         return functionMap;
     }
 
-    public Value evaluateFormula(Grid grid, QueriedRange range, ColumnFormula columnFormula) {
-        Value value = null;
-        if (columnFormula == null) {
-            for (Map.Entry<ColumnFormula, Value> entry : this.functionMap.entrySet()) {
-                List<Value> valueList = new LinkedList();
-                ColumnFormula formula = entry.getKey();
-                int col = formula.getCol();
-                for (int row : this.rowList) {
-                    valueList.add(grid.get(row, col));
-                }
-                value = formula.getFormula().getValue(valueList);
-                entry.setValue(value);
-            }
+    public Value evaluateFormula(Grid grid, int startRow, ColumnFormula columnFormula) {
+        Value value = this.functionMap.get(columnFormula);
+        if (value != null) {
+            return value;
         } else {
             List<Value> valueList = new LinkedList();
             int col = columnFormula.getCol();
             for (int row : this.rowList) {
-                valueList.add(grid.get(row+range.getStartRow(), col));
+                valueList.add(grid.get(row + startRow, col));
             }
             value = columnFormula.getFormula().getValue(valueList);
             this.functionMap.put(columnFormula, value);
+            return value;
         }
-//        System.out.println(this.value.get(0).getValue()+" "+value.getValue()+" "+value.getType());
-        return value;
+    }
+
+    public void inValidateColumnFormula() {
+        this.functionMap = new HashMap();
     }
 }

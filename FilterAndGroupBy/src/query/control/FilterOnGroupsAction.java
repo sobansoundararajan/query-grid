@@ -67,7 +67,7 @@ public class FilterOnGroupsAction {
             FilterOnGroupsAction(grid, range, nextResult, filterOnGroupsMap, level);
             boolean flag = true;
             for (FilterOnGroups condition : filterOnGroupsMap) {
-                Value value = nextResult.evaluateFormula(grid,range, condition.getColumnFormula());
+                Value value = nextResult.evaluateFormula(grid, range.getStartRow(), condition.getColumnFormula());
                 if (!conditionMap.get(condition.getConditionOperator()).apply(value, condition.getValue())) {
                     flag = false;
                 }

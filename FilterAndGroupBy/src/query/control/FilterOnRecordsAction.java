@@ -59,7 +59,7 @@ public class FilterOnRecordsAction {
                 }
             }
             queriedResult.setRow(temp);
-            queriedResult.evaluateFormula(grid,range, null);
+            queriedResult.inValidateColumnFormula();
         }
     }
 
