@@ -48,7 +48,10 @@ public class FilterOnRecordsAction {
             for (Integer row : queriedResult.getRow()) {
                 boolean flag = true;
                 for (FilterOnRecords filterOnRecords : filterOnRecordsList) {
+                    List<Value> valueList = new LinkedList();
                     Value value = grid.get(row + range.getStartRow(), filterOnRecords.getCol() + range.getStartCol());
+                    valueList.add(value);
+                    value = filterOnRecords.getFormula().getValue(valueList);
                     BiFunction<Value, String, Boolean> test = conditionMap.get(filterOnRecords.getConditionOperator());
                     if (!test.apply(value, filterOnRecords.getValue())) {
                         flag = false;

@@ -102,6 +102,21 @@ public class Main {
         Collection<FilterOnRecords> filterConditionList = new ArrayList();
         int option = 1;
         while (option != 0) {
+            Formula formula;
+            System.out.println("Select \nNORMAL\nMONTH\nWEEKDAYS\nYEAR\nQUARTERLY\nRANGE");
+            String function = scanner.nextLine();
+            if (function.equalsIgnoreCase("Range")) {
+                List<Double> rangeList = new ArrayList();
+                System.out.print("Enter The Ranges : ");
+                String str = scanner.nextLine();
+                String[] strArr = str.split(" ");
+                for (int i = 0; i < strArr.length; i++) {
+                    rangeList.add(Double.valueOf(strArr[i]));
+                }
+                formula = new Range(rangeList);
+            } else {
+                formula = formulaMap.get(function);
+            }
             System.out.println("Enter the col Number");
             int col = scanner.nextInt();
             scanner.nextLine();
@@ -110,7 +125,7 @@ public class Main {
             }
             String condition = scanner.nextLine().toLowerCase();
             String value = scanner.nextLine();
-            FilterOnRecords filterOnRecords = new FilterOnRecords(col, conditions.get(condition), value);
+            FilterOnRecords filterOnRecords = new FilterOnRecords(formula, col, conditions.get(condition), value);
             filterConditionList.add(filterOnRecords);
             System.out.println("0-Finish");
             option = scanner.nextInt();
