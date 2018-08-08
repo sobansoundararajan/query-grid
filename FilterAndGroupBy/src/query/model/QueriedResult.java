@@ -60,7 +60,7 @@ public class QueriedResult {
         return functionMap;
     }
 
-    public Value evaluateFormula(Grid grid, int startRow, ColumnFormula columnFormula) {
+    public Value evaluatedFormula(Grid grid, int startRow, ColumnFormula columnFormula) {
         Value value = this.functionMap.get(columnFormula);
         if (value != null) {
             return value;

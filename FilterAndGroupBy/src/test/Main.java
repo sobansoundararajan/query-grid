@@ -77,7 +77,7 @@ public class Main {
             System.out.println(queriedResult.getRow());
             for(ColumnFormula columnFormula:range.getColumnFormulaList())
             {
-                Value value=queriedResult.evaluateFormula(grid, range.getStartRow(), columnFormula);
+                Value value=queriedResult.evaluatedFormula(grid, range.getStartRow(), columnFormula);
                 System.out.println(columnFormula.getFormula().toString()+" "+value.getValue());
             }
         } else {
@@ -89,7 +89,7 @@ public class Main {
             }
             for(ColumnFormula columnFormula:range.getColumnFormulaList())
             {
-                Value value=queriedResult.evaluateFormula(grid, range.getStartRow(), columnFormula);
+                Value value=queriedResult.evaluatedFormula(grid, range.getStartRow(), columnFormula);
                 System.out.println(columnFormula.getFormula().toString()+" "+value.getValue());
             }
             for (QueriedResult chiledNode : queriedResult.getNextAction()) {
