@@ -14,9 +14,9 @@ import java.util.*;
 //$Id$
 public class ValueParser {
 
-    static int[] days = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    private final static int[] days = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-    public static boolean isNum(String str) {
+    private static boolean isNum(String str) {
         try {
             double d = Double.parseDouble(str);
         } catch (NumberFormatException nfe) {

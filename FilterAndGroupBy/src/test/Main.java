@@ -66,7 +66,7 @@ public class Main {
         formulaMap.put("YEAR", new Year());
     }
 
-    private static void print(Grid grid,QueriedRange range,QueriedResult queriedResult) {
+    private static void print(Grid grid, QueriedRange range, QueriedResult queriedResult) {
         if (queriedResult.getNextAction().isEmpty()) {
             if (queriedResult.getValue() != null) {
                 for (Value value : queriedResult.getValue()) {
@@ -75,10 +75,9 @@ public class Main {
                 }
             }
             System.out.println(queriedResult.getRow());
-            for(ColumnFormula columnFormula:range.getColumnFormulaList())
-            {
-                Value value=queriedResult.evaluatedFormula(grid, range.getStartRow(), range.getStartCol(), columnFormula);
-                System.out.println(columnFormula.getFormula().toString()+" "+value.getValue());
+            for (ColumnFormula columnFormula : range.getColumnFormulaList()) {
+                Value value = queriedResult.evaluatedFormula(grid, range.getStartRow(), range.getStartCol(), columnFormula);
+                System.out.println(columnFormula.getFormula().toString() + " " + value.getValue());
             }
         } else {
             if (queriedResult.getValue() != null) {
@@ -87,13 +86,12 @@ public class Main {
                     System.out.print(value.getValue() + " ");
                 }
             }
-            for(ColumnFormula columnFormula:range.getColumnFormulaList())
-            {
-                Value value=queriedResult.evaluatedFormula(grid, range.getStartRow(), range.getStartCol(), columnFormula);
-                System.out.println(columnFormula.getFormula().toString()+" "+value.getValue());
+            for (ColumnFormula columnFormula : range.getColumnFormulaList()) {
+                Value value = queriedResult.evaluatedFormula(grid, range.getStartRow(), range.getStartCol(), columnFormula);
+                System.out.println(columnFormula.getFormula().toString() + " " + value.getValue());
             }
             for (QueriedResult chiledNode : queriedResult.getNextAction()) {
-                Main.print(grid,range,chiledNode);
+                Main.print(grid, range, chiledNode);
             }
         }
     }
@@ -124,7 +122,8 @@ public class Main {
                 System.out.println(str);
             }
             String condition = scanner.nextLine().toLowerCase();
-            String value = scanner.nextLine();
+            String input = scanner.nextLine();
+            Value value = ValueParser.TypeandValue(input, dateFormat);
             FilterOnRecords filterOnRecords = new FilterOnRecords(formula, col, conditions.get(condition), value);
             filterConditionList.add(filterOnRecords);
             System.out.println("0-Finish");
@@ -238,7 +237,7 @@ public class Main {
             }
             String condition = scanner.nextLine().toLowerCase();
             String value = scanner.nextLine();
-            FilterOnGroups filterOnFunctionCondition = new FilterOnGroups(functionCondition, conditions.get(condition), value);
+            FilterOnGroups filterOnFunctionCondition = new FilterOnGroups(functionCondition, conditions.get(condition), ValueParser.TypeandValue(value, dateFormat));
             filterOnFunctionsConditionList.computeIfAbsent(level, (k) -> new LinkedList()).add(filterOnFunctionCondition);
             System.out.println("0-Finish");
             option = scanner.nextInt();
@@ -248,7 +247,7 @@ public class Main {
         }
     }
 
-    private static void sortOnFunctions(Grid grid,QueriedRange range) throws QueriedException {
+    private static void sortOnFunctions(Grid grid, QueriedRange range) throws QueriedException {
         System.out.println("Maximum Level is :" + range.getMaxLevel() + "\nEnter the Level :");
         int level = scanner.nextInt();
         scanner.nextLine();
@@ -269,7 +268,7 @@ public class Main {
             scanner.nextLine();
         }
         SortOnGroupsAction functionSortAction = new SortOnGroupsAction(functionConditionMap);
-        functionSortAction.execute(grid,range);
+        functionSortAction.execute(grid, range);
     }
 
     private static void reEvaluate(Grid grid, QueriedRange range) throws Exception {
@@ -309,7 +308,7 @@ public class Main {
         startCol = scanner.nextInt();
         endCol = scanner.nextInt();
         QueriedRange range = new QueriedRange(startRow, endRow, startCol, endCol);
-        Main.print(grid,range,range.getQueriedResult());
+        Main.print(grid, range, range.getQueriedResult());
         int option = 4;
         while (option != 0) {
             System.out.println("1-Filter\n2-GroupBy\n3-Sort\n4-Function\n5-Filter On Functions\n6-Sort on Functions\n7-ReEvaluate\n8-Reset(to NULL)\n0-Exit");
@@ -328,13 +327,13 @@ public class Main {
             } else if (option == 5) {
                 Main.filterOnFunctions(grid, range);
             } else if (option == 6) {
-                Main.sortOnFunctions(grid,range);
+                Main.sortOnFunctions(grid, range);
             } else if (option == 7) {
                 Main.reEvaluate(grid, range);
             } else if (option == 8) {
                 Main.reset(range);
             }
-            Main.print(grid,range,range.getQueriedResult());
+            Main.print(grid, range, range.getQueriedResult());
         }
 
     }

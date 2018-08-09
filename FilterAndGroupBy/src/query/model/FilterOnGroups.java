@@ -5,6 +5,8 @@
  */
 package query.model;
 
+import grid.Value;
+
 /**
  *
  * @author admin
@@ -13,9 +15,9 @@ public class FilterOnGroups {
 
     private final ColumnFormula columnFormula;
     private final ConditionOperator conditionOperator;
-    private final String value;
+    private final Value value;
 
-    public FilterOnGroups(ColumnFormula columnFormula, ConditionOperator conditionOperator, String value) {
+    public FilterOnGroups(ColumnFormula columnFormula, ConditionOperator conditionOperator, Value value) {
         this.columnFormula = columnFormula;
         this.conditionOperator = conditionOperator;
         this.value = value;
@@ -29,7 +31,7 @@ public class FilterOnGroups {
         return conditionOperator;
     }
 
-    public String getValue() {
+    public Value getValue() {
         return value;
     }
 }

@@ -5,6 +5,7 @@
  */
 package query.model;
 
+import grid.Value;
 import query.formula.Formula;
 
 /**
@@ -16,9 +17,9 @@ public class FilterOnRecords {
     private final Formula formula;
     private final int col;
     private final ConditionOperator conditionOperator;
-    private final String value;
+    private final Value value;
 
-    public FilterOnRecords(Formula formula, int col, ConditionOperator conditionOperator, String value) {
+    public FilterOnRecords(Formula formula, int col, ConditionOperator conditionOperator, Value value) {
         this.formula = formula;
         this.col = col;
         this.conditionOperator = conditionOperator;
@@ -37,7 +38,7 @@ public class FilterOnRecords {
         return conditionOperator;
     }
 
-    public String getValue() {
+    public Value getValue() {
         return value;
     }
 

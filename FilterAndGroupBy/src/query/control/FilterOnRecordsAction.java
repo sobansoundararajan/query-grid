@@ -18,7 +18,7 @@ import java.util.function.BiFunction;
  */
 public class FilterOnRecordsAction {
 
-    static Map<ConditionOperator, BiFunction<Value, String, Boolean>> conditionMap = new EnumMap<ConditionOperator, BiFunction<Value, String, Boolean>>(ConditionOperator.class);
+    static Map<ConditionOperator, BiFunction<Value, Value, Boolean>> conditionMap = new EnumMap<ConditionOperator, BiFunction<Value, Value, Boolean>>(ConditionOperator.class);
     private final Collection<FilterOnRecords> filterOnRecordsList;
 
     public FilterOnRecordsAction(Collection<FilterOnRecords> filterOnRecordsList) {
@@ -52,7 +52,7 @@ public class FilterOnRecordsAction {
                     Value value = grid.get(row + range.getStartRow(), filterOnRecords.getCol() + range.getStartCol());
                     valueList.add(value);
                     value = filterOnRecords.getFormula().getValue(valueList);
-                    BiFunction<Value, String, Boolean> test = conditionMap.get(filterOnRecords.getConditionOperator());
+                    BiFunction<Value, Value, Boolean> test = conditionMap.get(filterOnRecords.getConditionOperator());
                     if (!test.apply(value, filterOnRecords.getValue())) {
                         flag = false;
                         break;

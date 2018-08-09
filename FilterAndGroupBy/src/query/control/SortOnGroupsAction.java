@@ -6,13 +6,11 @@
 package query.control;
 
 import grid.Grid;
-import grid.Value;
 import query.exception.QueriedException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import query.model.*;
 
 /**

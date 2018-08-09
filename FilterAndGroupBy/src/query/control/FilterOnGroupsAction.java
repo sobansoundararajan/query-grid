@@ -12,11 +12,9 @@ import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiFunction;
 import query.model.ConditionOperator;
 import query.model.FilterOnGroups;
-import query.model.ColumnFormula;
 import query.model.QueriedRange;
 import query.model.QueriedResult;
 
@@ -26,7 +24,7 @@ import query.model.QueriedResult;
  */
 public class FilterOnGroupsAction {
 
-    static Map<ConditionOperator, BiFunction<Value, String, Boolean>> conditionMap = new EnumMap<ConditionOperator, BiFunction<Value, String, Boolean>>(ConditionOperator.class);
+    static Map<ConditionOperator, BiFunction<Value, Value, Boolean>> conditionMap = new EnumMap<ConditionOperator, BiFunction<Value, Value, Boolean>>(ConditionOperator.class);
     private final Map<Integer, List<FilterOnGroups>> filterOnGroupsMap;
 
     public FilterOnGroupsAction(Map<Integer, List<FilterOnGroups>> filterOnGroupsMap) {
